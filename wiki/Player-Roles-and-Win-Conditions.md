@@ -2,42 +2,40 @@
 
 ## The four roles
 
-**Innocent.** The majority. No powers, no information beyond what they can deduce. Wins when every Traitor is dead.
+**Innocent.** The majority. Innocents have no special powers and win when every Traitor is dead.
 
 ![Innocent HUD](Images/RoleInnocent.jpg)
 
-**Traitor.** A hidden minority who know each other's identities from the start. They share a credit shop with sabotage and counter-investigation tools, and win by killing everyone who isn't a Traitor.
+**Traitor.** A hidden minority who know one another. Traitors share a credit shop and win by killing everyone who is not a Traitor.
 
 ![Traitor HUD](Images/RoleTraitor.jpg)
 
-**Detective.** A publicly known Innocent (everyone can see who the Detective is) with their own investigation-focused shop: testing, DNA scanning, radar. Wins alongside the Innocents.
+**Detective.** A public Innocent with an investigation shop for testing, DNA scanning, and radar. Detectives win with the Innocents.
 
 ![Detective HUD](Images/RoleDetective.jpg)
 
-**Jester.** Deals no damage (a `Fired` event handler deletes their own projectiles) and cannot win the normal way. Traitors are told who the Jester is. If a non-Traitor kills them, the Jester wins instead and nobody else does; being killed by a Traitor accomplishes nothing for the Jester - and costs the Traitor who did it a kill-reward's worth of credits, since it doesn't advance the Traitors' own win condition either.
+**Jester.** Jesters deal no damage because a `Fired` handler removes their projectiles. A non-Traitor who kills the Jester gives the Jester a solo win. A Traitor kill does nothing for the Jester and costs the Traitor the kill reward.
 
 ![Jester HUD](Images/RoleJester.jpg)
 
-Role assignment (`Waldo_fnc_assignRoles`) resets every player to Innocent, then picks Traitors from a shuffled pool sized by the lobby's Traitor chance range (clamped by Min/Max Traitors), then a Detective if the lobby size clears `DetectiveMinPlayers`, then a Jester if enabled and either "Always Appears" or a chance roll succeeds.
+`Waldo_fnc_assignRoles` resets every player to Innocent, selects Traitors from the configured percentage range, then assigns a Detective and Jester when their settings allow it.
 
-Every player gets a personal round-start briefing card (`Waldo_fnc_showRoleCard`) stating their role, a one-line reminder of what it's actually trying to do, and - only where they're genuinely supposed to know - who's who: a Traitor gets every teammate's name plus the Jester's (if one exists) named and coloured in that role's colour; everyone gets the Detective's name (public knowledge to every role); nobody outside the Traitor team is ever told the Jester's identity, only that one exists. Colours respect each viewer's own colourblind-accessibility setting. The exact same content is re-viewable at any point mid-round from the "Your Briefing" panel on the scoreboard (**K**), in case the notification card was missed or has since faded.
+Each player receives a private round-start briefing. Traitors learn their teammates and the Jester. Everyone learns the Detective. Other roles learn only that a Jester exists. The same briefing remains available from the scoreboard's **K** panel. The colourblind setting applies to every role colour.
 
 ## How a round ends
 
-`Waldo_fnc_checkWin` runs once a second and evaluates endings in a fixed priority order, because more than one condition can technically be true in the same tick:
+`Waldo_fnc_checkWin` checks once per second in this order:
 
-1. **END4, Jester wins** - a non-Traitor cleanly killed the Jester this round (`JESTERCLEANKILL`). Checked first so a Jester's win can never be preempted by a same-tick Traitor wipe.
-2. **END1, Innocents win** - a Traitor side existed this round and none of them are alive.
-3. **END2, Traitors win** - a Traitor side existed, a non-Traitor side existed, and none of the non-Traitors are alive. A living Jester counts as a non-Traitor for this check, so a lone surviving Jester blocks the Traitors from winning until they're dealt with.
-4. **END3, time's up** - the round timer reached its limit with nobody having won outright. This is scored as an Innocents survival, not a loss for anyone.
+1. **END4, Jester wins.** A non-Traitor killed the Jester this round (`JESTERCLEANKILL`).
+2. **END1, Innocents win.** A Traitor side existed and no Traitor remains alive.
+3. **END2, Traitors win.** A Traitor side and a non-Traitor side existed, and no non-Traitor remains alive. A living Jester counts as a non-Traitor.
+4. **END3, time's up.** The timer reached its limit without another ending. This counts as an Innocent survival.
 
-Both team endings require a Traitor side to have existed at all (`count _traitors > 0`), and END2 additionally requires that a non-Traitor side existed (`Waldo_hadNonTraitors`, set in `assignRoles`). Without that second guard, a lobby that happened to assign every player as a Traitor would win instantly the moment the round loop ticked, which is a real degenerate case in a very small lobby.
+The team endings require a Traitor side. END2 also requires a non-Traitor side. These guards stop a one-player all-Traitor lobby from winning as soon as the loop starts.
 
 ## Round timing
 
-The civilian clock and the hard deadline are two different numbers:
+- `Waldo_startTime` is the civilian clock: base length plus player-count bonus.
+- `timelimit` is the hard cutoff: `Waldo_startTime` plus the Traitor bonus.
 
-- `Waldo_startTime` = base round length + (player count x bonus-per-player). This is what players see counting down.
-- `timelimit` = `Waldo_startTime` + the Traitor bonus. This is the actual hard cutoff (`checkWin`'s END3 check).
-
-Every death extends `timelimit` by the "time added per dead player" setting, so a round with a lot of killing runs longer than a quiet one, on the theory that more bodies means more to investigate. That extension is capped at the Base Round Length setting in total, so a chaotic round can't run "overtime" - past the civilian clock hitting zero - longer than the round's own base length.
+Each death extends `timelimit` by the configured amount. The total extension cannot exceed the Base Round Length.

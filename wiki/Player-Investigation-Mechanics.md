@@ -2,35 +2,35 @@
 
 ## DNA scanner and contamination
 
-Every kill leaves DNA (`Waldo_fnc_onKilled` tags the body, and the weapon holders the engine drops near it a moment later, with `Waldo_killerDNA`). A Detective's DNA Scanner samples a body or a piece of evidence within 4m and starts a hot/cold track: distance and compass bearing to the suspect, refreshed once a second.
+Every kill leaves DNA. `Waldo_fnc_onKilled` tags the body and nearby weapon holders with `Waldo_killerDNA`. A Detective's DNA Scanner samples evidence within 4m and tracks the suspect with a distance and bearing update each second.
 
-Two things stop this from being a free read:
+Two rules keep the scanner uncertain:
 
-- **Decay.** The older the sample, the shorter the track you get. A fresh kill gives a longer track than one investigated ten minutes later.
-- **Contamination.** For 90 seconds after a body or item appears, every different player (Detectives excluded, since the scanner itself requires standing inside the contamination radius) who comes within 3m counts as a witness. Each witness raises the odds the reading misdirects onto a random living non-culprit instead of the real suspect. The Detective is told the scene is contaminated but never told whether this particular reading is the real one, that judgment call is the actual investigation.
+- **Decay.** Older samples produce shorter tracks.
+- **Contamination.** For 90 seconds after a body or item appears, each different player within 3m can become a witness. Each witness raises the chance that the scanner points to a random living non-culprit. The scanner warns the Detective about contamination but cannot confirm whether a particular reading is true.
 
-**Enhanced Scanner** (a Detective passive) halves the misdirection chance, extends both the maximum and minimum track duration, and adds a forensic line when scanning a body: time since death and the murder weapon.
+The **Enhanced Scanner** halves the misdirection chance, extends the track duration, and adds time-since-death and weapon details when it scans a body.
 
 ## Identify Body
 
-Calling in a corpse (a scroll action added to every body) always confirms the death to the whole server. Revealing the victim's *role* is different: only a Detective's identification does that (`Waldo_roleRevealed`). A non-Detective finding the body first announces "found" once and does not consume the action, so a Detective who arrives later can still get the role reveal. Only a Detective's call retires the action for good. This also drives the in-round scoreboard's "confirmed dead" count.
+Every body has a scroll action that confirms the death to the server. Only a Detective's identification reveals the victim's role through `Waldo_roleRevealed`. A non-Detective can find a body first without consuming the action, so a Detective can still reveal the role later. A Detective's call retires the action and updates the scoreboard's confirmed-dead count.
 
-Every call gives the caller a private notification card, even a repeat one that has nothing new to report - clicking it again on an already-found body confirms that (and explains a Detective is still needed), rather than silently doing nothing.
+Each call gives the caller a private notification. Repeating the action on a found body explains that the body already has confirmation. It also explains that the role still needs a Detective.
 
 ![The in-round scoreboard (K)](Images/Scoreboard.jpg)
 
 ## Dead Ringer (Traitor)
 
-Arms a 25-second window where the next lethal hit you take is faked instead of killing you. A `HandleDamage` guard installed once per life (see [Architecture](Dev-Architecture) for why this needs reinstalling after a revive) caps the actual damage, then `Waldo_fnc_deadRingerTrigger` sells it: you ragdoll (`setUnconscious`, `allowDamage false`) and a decoy corpse spawns nearby, dressed from the spawn loadout pool and tagged role Innocent so anyone investigating it is misled. You're down and vulnerable for 20 seconds, not invisible, before getting back up.
+Dead Ringer arms a 25-second window. The next lethal hit triggers a `HandleDamage` guard instead of killing you. `Waldo_fnc_deadRingerTrigger` makes you ragdoll and blocks damage. It also spawns an Innocent decoy corpse dressed from the spawn-loadout pool. You remain down and vulnerable for 20 seconds.
 
 ## False Flag (Traitor)
 
-A passive that arms your next kill to leave a random living innocent's DNA at the scene instead of yours. Consumed on the next kill regardless of whether it lands on a Detective's radar.
+False Flag makes your next kill leave a random living Innocent's DNA at the scene. That kill consumes the item, whether or not the Detective's radar sees it.
 
 ## Body Remover (Traitor)
 
-Destroys a corpse outright. No DNA, no Identify Body, no forensic trail at all, at the cost of a shop slot and the time it takes to walk up and use it.
+Body Remover destroys a corpse. The Detective gets no DNA, Identify Body action, or forensic trail.
 
 ## Disguiser (Traitor)
 
-Press your assigned key to open a picker listing every living player (with whatever role you're actually allowed to know about them - the same visibility rules the scoreboard and radars follow, so this never leaks anything extra). Pick one and their exact current loadout is copied onto you (`setUnitLoadout`, the same atomic gear-copy technique the Rocket Launcher purchase uses) for 60 seconds, with a countdown shown top-right. For that whole window, any DNA `Waldo_fnc_onKilled` would normally leave at a kill attributes to the person you copied instead of you - checked ahead of False Flag, so an armed False Flag can still override it if both happen to be active at once. Buying a second disguise while one is already running replaces it outright rather than stacking; you always revert to your own original loadout, never a mid-disguise one, when it wears off or gets replaced.
+Disguiser opens a picker containing the living players visible to you. It copies the chosen player's current loadout for 60 seconds and shows a countdown. During that window, DNA from your kills identifies the copied player. False Flag takes priority when both effects are active. Buying another Disguiser replaces the active window and restores your original loadout.
