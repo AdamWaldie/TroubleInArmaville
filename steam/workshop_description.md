@@ -27,18 +27,10 @@ Both shops sell radar and defibrillators alongside their other equipment. A Dete
 
 Each round picks a new arena on the current terrain, with loot to search for and airdrops to contest. Arma's weapons and ballistics give Traitors room to attack from a distance, while buildings and vegetation give them somewhere to hide afterwards.
 
-The mission supports Altis, Tanoa, Stratis, Livonia, and Malden through separate terrain packages. Weapons, clothing, and loot draw from your loaded mods, with vanilla equipment available too.
+The mission supports Altis, Tanoa, Stratis, Livonia, and Malden through separate terrain packages. Weapons, clothing, and loot draw from your loaded mods, with vanilla equipment available too. CBA_A3, ACE3, ACRE2, and TFAR are optional.
 
 Hosts can adjust round length, role assignment, arena size, loot, weather, and time of day. Karma carries between rounds: killing teammates can cost you starting credits in later rounds. The scoreboard tracks the round, and the role HUD includes a colourblind-safe palette and several crest styles.
 
-## Before you host
-
-You'll need Arma 3, access to the chosen terrain, and other players. CBA_A3, ACE3, ACRE2, and TFAR are optional. No mods are required to play on a terrain you own.
-
-Turn **Kill Messages** off in the server difficulty settings. Arma otherwise names the killer to everyone because the mission uses Civilian player slots.
-
-Select the mission in multiplayer to host. New players can find the guide in the map screen. Press **B** for the Traitor or Detective shop.
+For hosts: turn **Kill Messages** off in the difficulty settings to prevent Arma from revealing the killer to everyone.
 
 [Player wiki](https://github.com/AdamWaldie/TroubleInArmaville/wiki) | [GitHub and source code](https://github.com/AdamWaldie/TroubleInArmaville) | [Release downloads](https://github.com/AdamWaldie/TroubleInArmaville/releases)
-
-MIT licensed.
