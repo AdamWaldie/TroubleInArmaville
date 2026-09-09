@@ -1,6 +1,6 @@
 # Lobby Parameters
 
-All lobby parameters are read by index in `Waldo_fnc_loadParams`, matching the order they're declared in `description.ext`'s `class Params`. If you're editing that file, appending a new parameter after the existing ones keeps every other index stable; inserting one in the middle (or reordering) shifts every index after it, which silently breaks the read AND resets any already-saved lobby parameter preset (it now points at the wrong setting by position). This block was reorganised into logical groups on 2026-08-01 for exactly that reason - do it again deliberately, not casually.
+`Waldo_fnc_loadParams` reads parameters by index in the order declared in `description.ext`'s `class Params`. Append new parameters after the existing list. Inserting or reordering a parameter shifts every later index and invalidates saved lobby presets. The current list uses logical groups, so keep that order deliberately.
 
 ![The lobby parameters screen](Images/parameters.jpg)
 
@@ -18,7 +18,7 @@ All lobby parameters are read by index in `Waldo_fnc_loadParams`, matching the o
 
 | Parameter | What it controls |
 |---|---|
-| Traitor Ratio: Minimum/Maximum % | The range `assignRoles` rolls a random Traitor percentage from - the two work together as a pair, not independent settings. |
+| Traitor Ratio: Minimum/Maximum % | The two values form the range from which `assignRoles` rolls a Traitor percentage. |
 | Minimum/Maximum Traitors | Hard clamps on the rolled count. Max 0 means unlimited. If Max is set below Min, Min wins. |
 | Enable Detective Role | Off entirely disables the role. |
 | Detective: Minimum Players | Lobby size floor before a Detective is assigned at all. |
@@ -26,7 +26,7 @@ All lobby parameters are read by index in `Waldo_fnc_loadParams`, matching the o
 | Jester: Minimum Players | Lobby size floor before a Jester is assigned at all (default 10). |
 | Jester: Always Appears | Skips the chance roll and guarantees a Jester, once the minimum-players floor is met. |
 | Chance of Jester Appearing | The roll used when "Always Appears" is off. |
-| Spectators See All Roles | Off by default - a dead/spectating player only sees the same role information their own role would grant them while alive (their own team, the always-public Detective), not everyone's. On reveals every living role to spectators, same as the old unconditional behaviour. |
+| Spectators See All Roles | Off shows a dead player only the roles their living role would reveal, including their team and the public Detective. On reveals every living role. |
 
 ## Gameplay / Economy
 
@@ -35,22 +35,22 @@ All lobby parameters are read by index in `Waldo_fnc_loadParams`, matching the o
 | Enable Karma System | Toggles the cross-round RDM penalty (see [Architecture](Dev-Architecture)). |
 | Starting Shop Credits (base) | Traitor/Detective starting credits, before the per-player scaling below. |
 | Additional Starting Credit per N Players | Traitor/Detective starting credits also get +1 for every N players in the lobby (default 8). |
-| Kill Reward Credits | Credits paid out for a qualifying kill (Detective killing a Traitor, or vice versa) - 0 turns the reward off entirely. |
+| Kill Reward Credits | Credits paid for a qualifying kill. Set 0 to disable the reward. |
 | Traitor Bonus: 1 Credit per N Civilians Killed | Traitors get +1 credit for every N civilian (non-Traitor, non-Jester) kills their team racks up this round - 0 turns it off. |
 
 ## Penalties
 
 | Parameter | What it controls |
 |---|---|
-| Jester Kill Penalty (credits left after) | Not an amount deducted - the number of credits a Traitor is left with after killing the Jester, however many they'd banked. Severe by design (costs their team the round outright), so this strips them down to the floor rather than a fixed deduction a well-stocked Traitor could shrug off. Default 1 credit, matching Radar's cost. |
-| Traitor Teamkill Penalty (credits) | Small credit penalty (plus a smaller karma hit than real RDM) for a Traitor killing a teammate - friendly fire between people who already know each other's role, not a mystery-breaking mistake, so it's punished but not severely. |
+| Jester Kill Penalty (credits left after) | The number of credits left after a Traitor kills the Jester. It is not a fixed deduction. The default is 1 credit. |
+| Traitor Teamkill Penalty (credits) | Credit and karma penalty for a Traitor who kills a teammate. The penalty is smaller than real RDM. |
 
 ## Airdrop / loot
 
 | Parameter | What it controls |
 |---|---|
 | Enable Airdrops | Off stops the round loop from ever calling `spawnAirdrop`. |
-| Airdrop Base/Random Timer | The wait between drops is base + a random roll up to this many extra seconds. |
+| Airdrop Base/Random Timer | The wait between drops is the base time plus a random roll up to this value. |
 | Loadouts Per Airdrop | How many weapon loadouts a non-golden crate gets. |
 | Max Ammo per Magazine | Ground loot won't include a magazine holding more than this. |
 | Loot Power | Low (SMGs/pistols only), Balanced (low-powered, topped up with standard rifles if sparse), or Anything (low and standard mixed unconditionally). |
@@ -73,12 +73,12 @@ All lobby parameters are read by index in `Waldo_fnc_loadParams`, matching the o
 
 | Parameter | What it controls |
 |---|---|
-| Enable Testing Mode | Unlocks the dev/test menu (`\`) and the instant role-cycle key (`]`). See [Dev and Test Mode](Dev-Test-Mode). Off, none of that exists for a normal game. |
+| Enable Testing Mode | Unlocks the dev/test menu (`[`) and the instant role-cycle key (`]`). See [Dev and Test Mode](Dev-Test-Mode). Normal games cannot access either action. |
 
 ## A server difficulty setting, not a lobby parameter, that hosts must change
 
-**Kill Messages** needs to be off in your server's difficulty settings, and this isn't something any parameter above (or `description.ext`) can do for you. Every player slot is `side="Civilian"`, so a Traitor killing an Innocent, a Detective, or anyone else looks to the engine like plain civilian-on-civilian same-side fire. With Kill Messages enabled, Arma broadcasts the killer's and victim's names to everyone's system chat the moment it happens - which names the Traitor in plain text and ends the round's mystery instantly. Set it before you host, not after someone dies mid-round and asks what that chat line meant.
+**Kill Messages** must be off in the server's difficulty settings. No lobby parameter or `description.ext` setting can change it. Every player slot uses `side="Civilian"`, so Arma otherwise treats every kill as same-side fire and broadcasts the killer and victim to system chat. Set it before hosting.
 
 ## A fixed lobby bug worth knowing about
 
-Every boolean-style parameter here reads as a numeric `{0,1}` value compared with `!= 0`, not as a `{False,True}` value with a bool default. Arma silently ignores a bool-typed lobby parameter that has a bool default, it just always returns the default no matter what the host picked in the lobby. An earlier version of this mission used bool defaults on several of these (Jester and Testing Mode included), which meant turning them on from the lobby did nothing. If you're adding a new on/off parameter, follow the existing pattern rather than the more "obvious" bool one.
+Every boolean-style parameter uses a numeric `{0,1}` value and compares it with `!= 0`. Arma ignores a bool-typed lobby parameter with a bool default and returns that default regardless of the host's choice. An earlier version used bool defaults for several settings, including Jester and Testing Mode, so their lobby controls did nothing. New on/off parameters must follow the existing numeric pattern.

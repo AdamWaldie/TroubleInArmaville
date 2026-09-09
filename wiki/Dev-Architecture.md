@@ -22,37 +22,39 @@ Everything lives as `Waldo_fnc_*` functions compiled by the `CfgFunctions` block
 
 ## Round lifecycle and state
 
-Each round ends by calling `BIS_fnc_endMissionServer`, a full mission restart. `missionNamespace` is wiped every time, so `Waldo_fnc_resetState` re-initializes every piece of round state defensively at the start of `Waldo_fnc_initServer` rather than assuming a clean slate. Clients wait on a `Waldo_configReady` flag before reading any config, so nothing races the server's synchronous `loadParams` pass.
+Each round ends with `BIS_fnc_endMissionServer`, which restarts the mission. The engine wipes `missionNamespace` on every restart, so `Waldo_fnc_resetState` rebuilds round state at the start of `Waldo_fnc_initServer`. Clients wait for `Waldo_configReady` before reading config from the server.
 
-Karma is the one exception: it's stored in `profileNamespace` (which survives the restart) rather than `missionNamespace`, keyed per player UID, and `Waldo_fnc_applyKarma` decays it back toward neutral and prunes UIDs no longer present, so a punishment never becomes permanent and the profile store can't grow without bound.
+Karma is the one exception. The mission stores it in `profileNamespace`, keyed by player UID, so it survives a restart. `Waldo_fnc_applyKarma` decays it toward neutral and removes UIDs that no longer appear.
 
-Init progress is logged as `[Waldo][server]` / `[Waldo][client]` phase markers to the `.rpt`, and echoed to chat when Testing Mode is on, specifically so a stalled replay can be traced to the exact phase it stopped at.
+The mission logs `[Waldo][server]` and `[Waldo][client]` phase markers to the `.rpt`. Testing Mode also echoes them to chat, which identifies the phase where a replay stalled.
 
 ## Why respawn needs special handling
 
-Arma has no "undo death." A unit that's actually died (`damage` 1, `Killed` fired) can never be revived in place, respawn always creates a brand-new object. Everything the mission does per-life, and might need to survive a mid-round revive, has to be explicitly re-homed onto that new object:
+Arma has no "undo death." After a unit reaches `damage` 1 and fires `Killed`, the engine cannot restore it in place. Respawn creates a new object, so the mission moves per-life state onto that object:
 
-- **Role, credits, kill count, purchase log** - captured from the old (dead) unit and re-applied to the new one by `onPlayerRespawn.sqf`.
-- **`TraitorList` / `DetectiveList` / `JesterList` membership** - repointed by the server-side `Waldo_fnc_reviveRelink`, since these authoritative lists drive win checks and credit awards and would otherwise keep referencing an object that can never act again.
-- **Per-life event handlers** - `addMPEventHandler`/`addEventHandler` attach to a specific object, not to whatever the `player` command happens to resolve to. The `MPKilled` kill handler and the Dead Ringer `HandleDamage` guard, both installed once in `Waldo_fnc_initClient`, have to be reinstalled on the new unit or a revived player would have no kill-credit tracking and no Dead Ringer protection for the rest of the round.
+- **Role, credits, kill count, purchase log** - `onPlayerRespawn.sqf` copies these values from the old unit to the new one.
+- **`TraitorList` / `DetectiveList` / `JesterList` membership** - the server-side `Waldo_fnc_reviveRelink` replaces the dead reference. These authoritative lists drive win checks and credit awards.
+- **Per-life event handlers** - `addMPEventHandler` and `addEventHandler` attach to one object. `Waldo_fnc_initClient` reinstalls the `MPKilled` handler and Dead Ringer's `HandleDamage` guard on the new unit.
 - **Loadout** - a freshly respawned unit is otherwise bare. `Waldo_fnc_applySpawnLoadout` (shared with the initial spawn) gives it a random uniform/vest/headgear from the discovered pools.
 
-Anything that reads the `player` command directly at call time, rather than holding onto a captured object reference, already tracks a respawn on its own and needs none of this. The `ace_unconscious` watchdog installed in `initClient` is the clearest example: it re-evaluates `player` on every loop tick, so it automatically follows whichever unit is currently controlled.
+Code that reads the `player` command at call time already tracks a respawn. It does not need this relinking. For example, the `ace_unconscious` watchdog in `initClient` evaluates `player` on every loop tick and follows the currently controlled unit.
 
 ## Terrain independence
 
-The mission runs on Altis, Tanoa, Stratis, or any other terrain, but this is solved at two different levels, and it matters which one:
+The mission handles terrain independence at runtime and during release packaging.
 
-**At runtime**, `Waldo_fnc_selectArena` scores candidate positions live rather than reading a fixed spot, and `Waldo_fnc_selectHoldingPos` does the same for the brief window before the real arena exists: a fast, `surfaceIsWater`-checked position every player is moved to the instant they join. `Waldo_fnc_initClient` also disables damage as its very first line, before either of those waits, so nothing about the gap between actually spawning and being relocated can hurt anyone. This is a safety net, not the fix, it can't stop someone from visibly spawning outside the map for a moment.
+**At runtime**, `Waldo_fnc_selectArena` scores live candidate positions. `Waldo_fnc_selectHoldingPos` picks a fast, `surfaceIsWater`-checked position for the pre-arena wait. `Waldo_fnc_initClient` disables damage before either wait. That protects a player during relocation, but it cannot hide a bad spawn for the first moment.
 
-`Waldo_fnc_selectArena` only scores a candidate by how many lootable buildings sit inside it - it has no idea whether the interior is actually walkable end to end. A town's own property fence, walled compound, or similar terrain object can land running across an otherwise good arena and split it in two. `Waldo_fnc_clearArenaPaths` runs after `Waldo_fnc_buildArena` and sweeps parallel chords across the arena's full width at three angles (not just a few lines through the centre, so an obstruction sealing off a corner is caught too), walking each chord in ground-hugging sub-segments so a hill partway along it can't hide a fence sitting on it.
+`Waldo_fnc_selectArena` scores lootable buildings, not end-to-end walkability. A property fence or walled compound can split a good arena. After `Waldo_fnc_buildArena`, `Waldo_fnc_clearArenaPaths` sweeps parallel chords across the full width at three angles. Ground-hugging sub-segments keep hills from hiding a fence.
 
-The best arenas are the densest towns, which are also full of ordinary clutter (yard fences, garden walls, buildings built flush against each other) a probe line will legitimately cross without any of it being a real problem - an early version that flagged any run of 3+ consecutive blocked chords still tripped constantly on exactly that clutter. The bar is deliberately much higher now: a run only counts as a real divider once it spans at least 55% of a sweep's full width, a threshold routine town fencing essentially never reaches. Buildings are never treated as a blocker at all (only CfgVehicles' `Wall` base class counts, covering placeable fences/walls) - a solid row of buildings is normal, desirable town layout, not a problem. Finding even one qualifying run is now treated as a strong signal of a genuinely bad location: the whole arena is re-rolled (bounded retries in `Waldo_fnc_initServer`) rather than gate-cut by default; only the final retry force-clears every run found (deleting the blocking object plus its immediate neighbours, not the whole obstruction) rather than leaving the round genuinely uncrossable.
+Dense towns contain ordinary clutter. The path check ignores buildings and counts only `CfgVehicles` objects based on `Wall`. A blocked run must span at least 55% of the sweep width before it counts as a divider. That threshold filters normal yard fencing.
 
-**At the file/workflow level**, the actual fix: `mission.sqm`'s 128 placed player-start positions are raw world coordinates baked in when the mission was saved in Eden, real only for the one terrain it was authored on (Altis). Reusing them unmodified on a smaller terrain isn't a "might be in water" risk, it can be flatly out of bounds (Stratis is smaller than Altis's coordinate range). `.github/workflows/release.yml` resolves this per terrain, in order:
+One qualifying run causes `Waldo_fnc_initServer` to reroll the arena. On the final retry, the mission removes each blocking object and its immediate neighbours. It does not delete the whole obstruction.
 
-1. `terrains/<Terrain>/mission.sqm`, if it exists - a real file someone built and verified in Eden directly on that terrain. Always preferred when present.
-2. Otherwise, `.github/terrains.json`'s entry for that terrain - an anchor point (a named, spacious, dry landmark, e.g. an airfield apron) that `.github/scripts/patch_mission_positions.py` recenters the existing 128-position grid onto, preserving its layout, with height set well above plausible ground so an imprecise anchor still drops players safely rather than into the terrain.
-3. Otherwise (Altis) - `mission.sqm` ships exactly as authored.
+**During release packaging**, the workflow accounts for the 128 player starts in `mission.sqm`. Eden stores them as raw Altis world coordinates. Smaller terrains can place those coordinates outside the map. `.github/workflows/release.yml` resolves each terrain in this order:
 
-`terrains/README.md` documents how to move a terrain from step 2 to step 1. The release workflow packages the result once per terrain (`TroubleInArmaville_<version>.<Terrain>`), since Arma keys a mission's terrain off its folder name, not off anything inside `mission.sqm`.
+1. Use `terrains/<Terrain>/mission.sqm` when present. A contributor built and verified this file in Eden on that terrain.
+2. Otherwise, read an anchor point from `.github/terrains.json`. `.github/scripts/patch_mission_positions.py` recentres the 128-position grid on that spacious, dry landmark. It preserves the layout and raises the starting height so players drop safely onto the terrain.
+3. For Altis, ship the root `mission.sqm` as authored.
+
+`terrains/README.md` explains how to replace an anchor-based layout with an Eden-verified file. The workflow packages one result per terrain as `TroubleInArmaville_<version>.<Terrain>`. Arma reads the terrain from the mission folder name, not from `mission.sqm`.

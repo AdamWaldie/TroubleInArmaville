@@ -1,37 +1,43 @@
 # Shops and Items
 
-Traitors and Detectives each get a shop (press **B**) with roughly fourteen items, built at runtime from a data-driven catalog in `Waldo_fnc_initShops`. Adding an item is a single array entry, no dialog or UI edits:
+Traitors and Detectives each get a shop with roughly fourteen items. Press **B** to open it. `Waldo_fnc_initShops` builds both catalogs at runtime, so adding an item needs one array entry:
 
 ```
 [ _name, _cost, _type, _onBuy, _onActivate, _tooltip ]
 ```
 
 - `_type` is `"passive"`, `"weapon"`, or `"activation"`.
-- `_onBuy` runs immediately when the item is purchased.
-- `_onActivate` (activation items only) runs when the player presses whichever of **Y** / **U** / **J** the item is bound to. It returns `true` to consume the item or `false` to leave it assigned, which is how items like the DNA scanner or tester stay available if you pressed the key without a valid target in front of you.
+- `_onBuy` runs when the player purchases the item.
+- `_onActivate` runs when the player presses its **Y**, **U**, or **J** binding. Return `true` to consume the item or `false` to leave it assigned. DNA Scanner and Tester use `false` when the target is invalid.
 
-Activation items get 3 key slots (Y/U/J), not one - the first activation item you buy lands on Y, the second on U, the third on J. Buy a fourth and it goes to a backlog instead of bumping anything, until you free up a slot (by using one) or reassign one yourself from the shop's Purchased panel, where every owned, not-yet-used activation item shows a Y/U/J button row - click one to move that item to that key.
+Activation items use three key slots. The first three purchases bind to Y, U, and J. Later purchases wait in a backlog until you spend an item or reassign one from the Purchased panel.
 
 ## Traitor shop
 
-Suicide Bomb, Radar (pulses everyone's position, recharges), Rocket Launcher, Stamina, Teleport Grenades (red smoke that warps you to where it lands), Long Rifle, Defibrillator (revives a body onto the Traitor team), Silenced Pistol, Frag Grenades, Body Armor, Body Remover (destroys a corpse outright, denying the Detective evidence), C4 Charge, Night Vision, Dead Ringer, False Flag, Disguiser (copy a living player's exact loadout for 60 seconds - see [Investigation Mechanics](Player-Investigation-Mechanics) for how it also redirects your DNA).
+The catalog contains Suicide Bomb, Radar, Rocket Launcher, Stamina, Teleport Grenades, Long Rifle, Defibrillator, and Silenced Pistol. It also contains Frag Grenades, Body Armor, Body Remover, C4 Charge, Night Vision, Dead Ringer, False Flag, and Disguiser.
+
+Radar pulses every player's position and then recharges. Teleport Grenades create red smoke and move you to the landing point. The Defibrillator revives a body onto the Traitor team. Body Remover destroys a corpse and denies the Detective its evidence. Disguiser copies a living player's loadout for 60 seconds and redirects your DNA. See [Investigation Mechanics](Player-Investigation-Mechanics).
 
 ![The Traitor shop](Images/BuyMenuTraitor.jpg)
 
 ## Detective shop
 
-Portable Tester (reveals a role at close range), DNA Scanner, Enhanced Scanner (upgrades the DNA Scanner), Radar, Smoke Grenades, Stamina, Flower Power (a novelty round-turns-into-flowers effect), Health Station, Defibrillator (revives a body as whatever it was), Frag Grenades, Body Armor, Medical Kit, Binoculars, Night Vision.
+Portable Tester, DNA Scanner, Enhanced Scanner, Radar, Smoke Grenades, Stamina, Flower Power, Health Station, Defibrillator, Frag Grenades, Body Armor, Medical Kit, Binoculars, and Night Vision.
+
+The Portable Tester reveals a role at close range. Enhanced Scanner upgrades the DNA Scanner. Flower Power replaces the round with flowers. The Defibrillator revives a body with its original role.
 
 ![The Detective shop](Images/BuyMenuDetective.jpg)
 
-Weapon and gear classnames in both catalogs are read from `missionNamespace` at click time (`TraitorRifle`, `ShopArmorVest`, `ShopFrag`, and so on), which is what makes the shop follow whatever mods the dynamic arsenal discovered rather than hardcoding classnames. See [Equipment System](Dev-Equipment-System).
+Both catalogs read weapon and gear classnames from `missionNamespace` at click time. The shop follows the dynamic arsenal instead of hardcoding mod content. See [Equipment System](Dev-Equipment-System).
 
 ## The Purchased panel
 
-A second panel in the shop dialog lists everything bought this round with its tooltip as a how-to-use reminder (`Waldo_purchases`, reset each round in `assignRoles`), newest purchase at the top - buying something new pushes everything already there down beneath it. The point is that you're never three purchases deep and unable to remember what an item you bought five minutes ago actually does.
+A second panel lists everything bought this round with its tooltip as a usage reminder (`Waldo_purchases`, reset each round in `assignRoles`). New purchases appear at the top.
 
-For activation items specifically, each entry also shows which key (Y/U/J) it's currently bound to - or `[unassigned]` if it's sitting in the backlog because all 3 slots were already taken when you bought it, or `[used]` once it's been spent. Click any of the Y/U/J buttons on that row to (re)assign it to that key; whatever was already there gets bumped to the backlog rather than lost.
+Each activation entry shows its current key, `[unassigned]` in the backlog, or `[used]` after spending. Click Y, U, or J to reassign it. The item already using that key moves to the backlog.
 
 ## Revive, in more detail
 
-Both shops' defibrillators call `Waldo_fnc_revive`, which is more involved than it looks because Arma has no real "undo death." A truly dead unit (`damage` 1, the `Killed` event already fired) can never be revived in place, respawn always creates a brand-new unit object. So the revive flow forces an early respawn (`setPlayerRespawnTime 0`) and stashes the revive intent (which role to become) on the corpse. The mission-root `onPlayerRespawn.sqf` hook then re-homes everything onto the actual new unit the moment it exists: role and shop credits, the round's kill count, the Purchased log, the per-life kill/damage event handlers that were bound to the old unit object, a basic loadout, and an HUD refresh. `Waldo_fnc_reviveRelink` (server-side) handles repointing `TraitorList`/`DetectiveList`/`JesterList` off the dead reference, since a forced Traitor conversion needs that list to be correct for win checks and credit awards.
+Both defibrillators call `Waldo_fnc_revive`. Arma cannot restore a unit after `damage` reaches 1 and the `Killed` event fires. Respawn creates a new unit object.
+
+The revive flow therefore sets `setPlayerRespawnTime` to 0 and stores the intended role on the corpse. The mission-root `onPlayerRespawn.sqf` hook moves the role, credits, kill count, purchase log, event handlers, and activation state onto the new unit. It also restores a basic loadout and refreshes the HUD. On the server, `Waldo_fnc_reviveRelink` replaces the dead reference in `TraitorList`, `DetectiveList`, or `JesterList`. Win checks and credit awards then use the new unit.

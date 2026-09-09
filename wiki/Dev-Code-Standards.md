@@ -1,23 +1,23 @@
 # Code Standards
 
-These are the conventions the existing codebase actually follows. A pull request that matches them will look like it belongs here; one that doesn't will stand out in review. None of this is enforced by a linter, SQF doesn't have one, so it's enforced by everyone reading code before it merges.
+These are the conventions used by the codebase. A pull request should follow them. SQF has no reliable linter for these rules, so reviewers check them before merge.
 
 ## File and function naming
 
-A file at `functions/<group>/fn_<name>.sqf` becomes `Waldo_fnc_<name>`. That's the whole naming rule, one function per file, filename gives you the function name. Every new file needs a matching entry in `description.ext`'s `CfgFunctions` block under its group, `class <name> {};`, with a trailing comment naming the function and what it does:
+A file at `functions/<group>/fn_<name>.sqf` becomes `Waldo_fnc_<name>`. Keep one function per file. Register every new file under its group in the `CfgFunctions` block in `description.ext`. Add a trailing comment with the function name and purpose:
 
 ```cpp
 class revive {};            // Waldo_fnc_revive
 class reviveRelink {};      // Waldo_fnc_reviveRelink (server: relinks role/lists onto a revived unit's NEW object)
 ```
 
-Nothing auto-scans the `functions/` folder. A file that exists but isn't registered here simply doesn't compile to a callable function, and that's a silent failure you won't see until something tries to call it.
+Nothing scans the `functions/` folder automatically. Without a `CfgFunctions` entry, the engine does not compile the file into a callable function. The failure appears only when code tries to call it.
 
-Two files are marked `{ preInit = 1; };` instead of the default: `initShops` (defines the shop catalogs) and `debugInit` (builds the dev/test registry). Both need to exist before other preInit or init-time code references them, and both run on every machine, not just server or client.
+Two functions use `{ preInit = 1; };`: `initShops` defines the shop catalogs, and `debugInit` creates the dev/test registry. Other preInit and init-time code depends on them. Both run on every machine.
 
 ## Guard clauses
 
-The first line (or two) of a function states where it's allowed to run, before anything else:
+Start each function with the guard that defines where it may run:
 
 ```sqf
 if (!isServer) exitWith {};
@@ -26,7 +26,7 @@ if (!isServer) exitWith {};
 if (!hasInterface) exitWith {};   // dedicated server / headless: nothing to do
 ```
 
-If a function is genuinely both server- and client-aware in different parts, that's rare here and should be commented explicitly rather than left to be inferred.
+Functions rarely contain separate server and client paths. When one does, add a comment that explains the split.
 
 ## Params and privacy
 
@@ -37,48 +37,52 @@ params ["_newUnit", "_oldUnit", "_respawn", "_respawnDelay"];
 params [["_dir", 0]];
 ```
 
-Every local variable is `private`. The handful of unprefixed globals you'll see on units (`role`, `points`, `tested`) predate the `Waldo_` convention and are treated as established public API, read by many systems, don't rename them. Everything new uses the `Waldo_` prefix, both to avoid colliding with another mod's globals and to make it obvious at a glance what's this mission's state versus the engine's or another mod's.
+Declare every local variable as `private`. The unprefixed unit globals `role`, `points`, and `tested` predate the `Waldo_` convention. Many systems treat them as public API, so do not rename them.
+
+Prefix every new global with `Waldo_`. This prevents collisions and separates mission state from engine or mod state.
 
 ## Broadcasting state
 
-`setVariable`'s third argument is a deliberate choice, not a habit:
+Choose the third `setVariable` argument from the ownership requirement:
 
-- `true` when another machine needs to see the value: role, points, list membership, forensic tags on a body, anything read by `getVariable` on a different client than the one that set it.
-- Omitted (local only) for state that's genuinely per-client and never read elsewhere: the activation key slots/backlog, a UI handler id, a debug toggle.
+- Use `true` when another machine needs the value. Examples include roles, points, list membership, and forensic tags on bodies.
+- Omit it for per-client state that no other machine reads. Examples include activation slots, UI handler IDs, and debug toggles.
 
-If you're not sure which a new variable needs, check whether anything on another machine will ever call `getVariable` on it. If yes, broadcast it.
+If code on another machine will call `getVariable` on the value, broadcast it.
 
 ## remoteExec targeting
 
-The target argument routes execution, and the three forms used throughout mean specific things:
+The target argument routes execution. This project uses four forms:
 
-- An object argument routes to whichever machine currently owns (is local to) that object. This is how `setPlayerRespawnTime` and per-player UI refreshes reach the right client.
-- `0` broadcasts to every currently connected machine. Nothing here passes the separate JIP-persistence argument, so a player who joins after the call won't have it replayed, which is fine for a one-off announcement but worth knowing if you add something a late joiner would actually need.
-- `2` targets the server only, used for anything that must run with server authority (list mutations, spawning networked objects that need a stable owner).
-- `-2` targets every client except whichever machine is calling `remoteExec`.
+- An object routes to the machine that owns it. Use this for `setPlayerRespawnTime` and per-player UI refreshes.
+- `0` targets every connected machine. These calls do not use JIP persistence, so later joiners receive no replay.
+- `2` targets the server. Use it for authoritative list changes and networked object creation.
+- `-2` targets every client except the caller.
 
-Don't guess a target number by trial and error, pick the one that matches which machine actually needs to run the code.
+Choose the target that owns the operation.
 
 ## Event handlers don't stack themselves
 
-Anything that installs a `Draw3D`, `Fired`, `HandleDamage`, or CBA per-frame handler and might reasonably be triggered more than once (a shop item that can be bought twice, a dev-menu action fired again) stores the handler's id in a `getVariable` and removes any previous one before installing a new one:
+Code that installs a `Draw3D`, `Fired`, `HandleDamage`, or CBA per-frame handler must prevent duplicates. Store the handler ID in a variable and remove the previous handler before installing another:
 
 ```sqf
 private _old = player getVariable ["Waldo_radarEH", -1];
 if (_old >= 0) then { removeMissionEventHandler ["Draw3D", _old]; };
 ```
 
-Skipping this doesn't crash anything, it just leaks a duplicate handler that runs forever alongside the new one. That bug has happened here before; don't reintroduce it.
+Without this guard, each repeat adds another permanent handler. This has caused duplicate-handler bugs before.
 
-`MPKilled` is installed with `addMPEventHandler`, since it's the one truly server-authoritative per-life event, everything downstream (credit awards, karma, the Jester win check) happens inside a function gated on `isServer`. Client-local reactions use plain `addEventHandler` or `CBA_fnc_addEventHandler`.
+Install `MPKilled` with `addMPEventHandler`. Its server-gated callback handles credit awards, Karma, and the Jester win check. Use `addEventHandler` or `CBA_fnc_addEventHandler` for client-local reactions.
 
 ## A unit's identity doesn't survive a respawn
 
-If you're writing anything that captures a unit object and expects to still be able to act on it later (a delayed `spawn`, a stored reference, anything not re-read at call time), read [Architecture](Dev-Architecture) first. Arma's respawn always creates a new object; a captured reference to the pre-respawn unit is a corpse forever afterward, and code that keeps acting on it fails silently rather than erroring.
+If code captures a unit object for later use, read [Architecture](Dev-Architecture) first. Arma's respawn creates a new object. A reference to the old unit remains a corpse, and later calls against it fail silently.
 
 ## Equipment: no hardcoded classnames outside the arsenal
 
-`Waldo_fnc_buildArsenal` is the only place a mod-specific or DLC-specific classname should ever appear (and even there, only as a documented vanilla fallback). Every other system reads the arsenal's published globals (`ShopArmorVest`, `TraitorRifle`, `uniformsConfig`, and so on with a `missionNamespace getVariable` and a sane default). If a new feature needs a new kind of gear, extend `buildArsenal`'s discovery and publish a new global, don't hand-list a classname somewhere downstream.
+Keep mod-specific and DLC-specific classnames inside `Waldo_fnc_buildArsenal`. Use them there only as documented vanilla fallbacks.
+
+Other systems read the published arsenal globals with `missionNamespace getVariable` and a safe default. Examples include `ShopArmorVest`, `TraitorRifle`, and `uniformsConfig`. When a feature needs new gear, extend `buildArsenal` and publish another global.
 
 ## Extending the dev/test menu
 
@@ -88,12 +92,14 @@ Never edit `WaldoDebug`'s `.hpp` or hand-add a case to `fn_debugMenu.sqf`. Regis
 ["Category", "Label", "Tooltip", "local"|"server", { /* _this = the acting unit */ }] call Waldo_debugRegister;
 ```
 
-See [Dev and Test Mode](Dev-Test-Mode) for the full contract (what `"local"` vs `"server"` context means, and why the code itself never crosses the network).
+See [Dev and Test Mode](Dev-Test-Mode) for the `"local"` and `"server"` execution contract.
 
 ## Comments explain why, not what
 
-The line `player setDamage 1;` doesn't need a comment. A comment earns its place by explaining something the code alone can't: a constraint, a bug it's working around, why an obvious-looking alternative doesn't work. You'll see this throughout: several files carry a short note on a past bug and exactly how the current code avoids it. That's the standard, if you fix something non-obvious, say what would have gone wrong instead, not just what the new code does.
+The line `player setDamage 1;` needs no comment. Comment constraints, engine behaviour, previous bugs, and the reason an obvious alternative fails. When fixing a non-obvious defect, record the failure the new code prevents.
 
 ## Before you commit
 
-SQF has no compiler. A mismatched brace or bracket doesn't fail until Arma tries to run that exact code path, sometimes mid-round, and the failure is a silent script abort logged to `.rpt`, not an error at load time. Before committing, check that every file you touched has balanced `()`, `{}`, `[]`, and quotes. A simple per-file character count catches the overwhelming majority of these before they ever reach a test session.
+SQF has no compiler. A mismatched brace or bracket may fail only when Arma reaches that path, sometimes mid-round. The engine records the abort in `.rpt`.
+
+Before committing, check balanced `()`, `{}`, `[]`, and quotes in every changed file. A per-file character count catches most mistakes before an Arma test.
