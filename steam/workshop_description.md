@@ -19,7 +19,7 @@ Your briefing explains your role, and you can reopen it with **K**. Death sends 
 
 Detectives can reveal a body's role and use DNA to track a suspect's distance and bearing. Samples decay, and people near a fresh scene can contaminate them. The Enhanced Scanner improves those readings and adds weapon and time-of-death details. A Portable Tester checks a living player's role at close range.
 
-Traitors can frame an Innocent with False Flag, copy someone's loadout and DNA with Disguiser, or destroy a body before the Detective reaches it. Dead Ringer leaves a decoy corpse when you fake your death. There's also a fake health station that explodes when another player uses it.
+Traitors can frame another player with False Flag, copy someone's loadout and DNA with Disguiser, or destroy a body before the Detective reaches it. Dead Ringer leaves a decoy corpse when you fake your death. There's also a fake health station that explodes when another player uses it.
 
 Both shops sell radar and defibrillators alongside their other equipment. A Detective's defibrillator restores the dead player's original role. A Traitor's recruits them onto the Traitor team. Detectives also get health stations and medical supplies.
 

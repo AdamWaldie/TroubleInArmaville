@@ -397,13 +397,18 @@ Waldo_traitorShop = [
 		"Arms a 25s window: your next lethal hit is faked - you ragdoll like a kill and a decoy body appears, but you're not really dead"],
 
 	["False Flag", 4, "passive",
-		{ player setVariable ["Waldo_falseFlag", true, true]; hint "False Flag armed - your next kill will frame someone else."; },
+		// No standalone hint here - fn_buyItem.sqf's own "PURCHASED" shop-panel
+		// confirmation (and its hint fallback for when the panel isn't open)
+		// already covers this; a second unconditional hint on top of that
+		// stacked both on screen at once for every purchase.
+		{ player setVariable ["Waldo_falseFlag", true, true]; },
 		{},
-		// Raised from 3 - directly frames an innocent bystander for the
-		// kill, one of the most investigation-corrupting items available,
-		// priced to match (though Disguiser below now edges it out, since
-		// that one corrupts the visual trail too, not just the forensic one).
-		"Your next kill leaves an innocent bystander's DNA at the scene instead of yours"],
+		// Raised from 3 - directly frames another living player for the kill,
+		// one of the most investigation-corrupting items available, priced to
+		// match (though Disguiser below now edges it out, since that one
+		// corrupts the visual trail too, not just the forensic one). Can land
+		// on the Detective, not just an Innocent - see fn_onKilled.sqf.
+		"Your next kill leaves another living player's DNA at the scene instead of yours"],
 
 	["Disguiser", 5, "activation",
 		{},
