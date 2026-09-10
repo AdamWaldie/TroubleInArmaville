@@ -117,17 +117,38 @@ private _trackToken = player getVariable ["Waldo_dnaTrackToken", 0];
 	// it does to their odds - show the actual risk tier (derived from
 	// _misChance, so it already reflects Enhanced Scanner's halving) plus the
 	// count, instead of just the count alone.
-	if (_contam > 0) then {
-		private _tier = ["Low", "Moderate", "High", "Severe"] select (
-			if (_misChance < 0.15) then {0} else { if (_misChance < 0.4) then {1} else { if (_misChance < 0.7) then {2} else {3} } }
-		);
-		private _tierColour = ["#6CE5A8", "#FFD166", "#FF9F5A", "#FF6161"] select (
-			if (_misChance < 0.15) then {0} else { if (_misChance < 0.4) then {1} else { if (_misChance < 0.7) then {2} else {3} } }
-		);
-		[
-			"DNA SCANNER",
+	//
+	// _source (not _tracked) can itself already BE the scanning Detective -
+	// Disguiser or False Flag redirecting a kill's DNA onto the Detective
+	// (fn_onKilled.sqf) plants it directly, with zero nearby witnesses and so
+	// zero Waldo_dnaContamination. Without a signal here that read as the
+	// scanner being flat-out broken ("suspect" sitting on the Detective's own
+	// position at 0m forever) rather than the deliberate plant it is. Folded
+	// into the same DNA_CONTAM channel/style as an automatic "Severe" tier -
+	// a self-match is a worse trust signal than any witness count could
+	// produce, and it never reveals WHICH mechanic caused it, preserving the
+	// same "contaminated, but is THIS reading real?" judgement call as the
+	// witness-based case.
+	private _selfMatch = (_source == player);
+	if (_contam > 0 || _selfMatch) then {
+		private _tier = if (_selfMatch) then { "Severe" } else {
+			["Low", "Moderate", "High", "Severe"] select (
+				if (_misChance < 0.15) then {0} else { if (_misChance < 0.4) then {1} else { if (_misChance < 0.7) then {2} else {3} } }
+			)
+		};
+		private _tierColour = if (_selfMatch) then { "#FF6161" } else {
+			["#6CE5A8", "#FFD166", "#FF9F5A", "#FF6161"] select (
+				if (_misChance < 0.15) then {0} else { if (_misChance < 0.4) then {1} else { if (_misChance < 0.7) then {2} else {3} } }
+			)
+		};
+		private _msg = if (_selfMatch) then {
+			format ["<t color='%1'>%2 contamination</t> - this trail leads straight back to you. The DNA may be spoofed rather than a real witness at the scene.", _tierColour, _tier]
+		} else {
 			format ["<t color='%1'>%2 contamination</t> (%3 nearby witness%4) - reading may be unreliable.",
-				_tierColour, _tier, _contam, ["es", ""] select (_contam == 1)],
+				_tierColour, _tier, _contam, ["es", ""] select (_contam == 1)]
+		};
+		[
+			"DNA SCANNER", _msg,
 			"WARNING", 4, "BOTTOM_LEFT", "DNA_CONTAM", "DNA SCANNER"
 		] call Waldo_fnc_ShowUiNotification;
 		sleep 1.5;

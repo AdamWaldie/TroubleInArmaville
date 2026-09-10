@@ -96,15 +96,21 @@ if (!isNull _culprit && {_culprit != _unit}) then {
 	};
 
 	// DNA left at the scene. A traitor's armed "False Flag" frames a random
-	// living innocent instead (and is consumed); otherwise it's the real culprit.
-	// This used to have zero observable effect for a tester who didn't
-	// personally go DNA-scan the corpse afterward - the frame itself worked,
-	// there was just no confirmation anywhere that it had, which read as
-	// "doesn't seem to work." A private notification card to the culprit
-	// (Waldo_fnc_ShowUiNotification) closes that gap. Also excludes Detectives
-	// from the frame pool now, matching the shop tooltip's actual wording
-	// ("an innocent bystander") - it used to only exclude other Traitors, so
-	// it could occasionally frame a Detective.
+	// other living player instead (and is consumed); otherwise it's the real
+	// culprit. This used to have zero observable effect for a tester who
+	// didn't personally go DNA-scan the corpse afterward - the frame itself
+	// worked, there was just no confirmation anywhere that it had, which read
+	// as "doesn't seem to work." A private notification card to the culprit
+	// (Waldo_fnc_ShowUiNotification) closes that gap.
+	//
+	// The pool includes the Detective again (briefly excluded - see prior
+	// history) - a small lobby can easily have no living Innocent left besides
+	// the victim (1 Traitor + 1 Detective + 1-2 Innocents is common), which
+	// made an armed False Flag reliably report "no one was around" the moment
+	// the last other Innocent died, reading as broken rather than as the game
+	// running out of bystanders. The Detective being a valid frame target is
+	// exactly why the DNA Scanner now calls out a self-match explicitly
+	// (fn_dnaScanner.sqf) instead of just silently tracking them at 0m.
 	private _dnaOn = _culprit;
 	// Disguised (Waldo_fnc_disguiserActivate) - their own DNA already reads
 	// as whoever they copied the loadout from, the whole point of the
@@ -116,7 +122,7 @@ if (!isNull _culprit && {_culprit != _unit}) then {
 		if (!isNull _disguiseAs) then { _dnaOn = _disguiseAs; };
 	};
 	if (_culprit getVariable ["Waldo_falseFlag", false]) then {
-		private _frames = allPlayers select { alive _x && {!(_x in _traitors)} && {!(_x in _detectives)} && {_x != _culprit} };
+		private _frames = allPlayers select { alive _x && {!(_x in _traitors)} && {_x != _culprit} };
 		if (count _frames > 0) then {
 			_dnaOn = selectRandom _frames;
 			[

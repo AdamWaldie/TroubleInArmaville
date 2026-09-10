@@ -111,7 +111,7 @@ player createDiaryRecord ["WaldoHowToPlay", [
 	"left to investigate.<br/>" +
 	"<t color='#ffd23f'>Dead Ringer</t> - your next lethal hit is faked: you ragdoll, a decoy corpse drops, " +
 	"and you're warped somewhere safe inside the arena, out of sight.<br/><br/>" +
-	"<t color='#ffd23f'>False Flag</t> - your next kill's DNA points to an innocent bystander instead of " +
+	"<t color='#ffd23f'>False Flag</t> - your next kill's DNA points to another living player instead of " +
 	"you.<br/>" +
 	"<t color='#ffd23f'>Disguiser</t> - pick a living player and copy their exact loadout for 60s, with a " +
 	"countdown shown top-right; any DNA you leave behind while disguised points to them too. The most " +

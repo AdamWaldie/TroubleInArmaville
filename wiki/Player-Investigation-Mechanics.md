@@ -25,7 +25,7 @@ Dead Ringer arms a 25-second window. The next lethal hit triggers a `HandleDamag
 
 ## False Flag (Traitor)
 
-False Flag makes your next kill leave a random living Innocent's DNA at the scene. That kill consumes the item, whether or not the Detective's radar sees it.
+False Flag makes your next kill leave a random other living player's DNA at the scene (Innocent or Detective - only the culprit's own team is excluded). That kill consumes the item, whether or not the Detective's radar sees it. If no other living player is around to frame, the kill falls back to leaving your own DNA - the item is still consumed either way.
 
 ## Body Remover (Traitor)
 
