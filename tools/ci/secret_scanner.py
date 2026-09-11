@@ -58,10 +58,11 @@ PATTERNS = [
         re.compile(r"-----BEGIN (RSA |EC |OPENSSH |DSA |PGP )?PRIVATE KEY-----"),
     ),
     (
+        # Matches a steamcmd "+login" followed by two literal tokens, i.e.
+        # neither one starts with a shell/env variable sigil - so
+        # publish_workshop.sh's own "+login "$STEAM_USERNAME" "$STEAM_PASSWORD""
+        # never trips this, only an actual hardcoded account/password pair would.
         "steamcmd login with a literal (non-variable) password",
-        # +login user password - flags only when neither token starts with
-        # a shell/env variable sigil, so publish_workshop.sh's own
-        # `+login "$STEAM_USERNAME" "$STEAM_PASSWORD"` never matches.
         re.compile(r'\+login\s+"?[^\s"$]+"?\s+"?[^\s"$]{4,}"?'),
     ),
     (
