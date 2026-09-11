@@ -28,7 +28,9 @@ Traitors have ways to interfere. Plant someone else's DNA with False Flag, copy 
 
 ## Maps, equipment, and settings
 
-Each round chooses a new arena on the current terrain. Search it for loot and watch for airdrops, using Arma's weapons, optics, and ballistics. The mission draws weapons and clothing from loaded mods as well as vanilla gear.
+Each round chooses a new arena on the current terrain. Search it for loot and watch for airdrops, using Arma's weapons, optics, and ballistics.
+
+On mission start, the server scans every loaded mod's configs and builds its weapon, gear, and clothing pools dynamically — there are no per-modpack preset files to maintain. That makes the mission workable with most weapon and uniform mods out of the box: run it vanilla, or drop in RHS, CUP, 3CB, or your own modpack, and it sorts what it finds into loot, airdrops, and shop items. Every category also has a built-in vanilla fallback, so a total-conversion mod that's missing a pistol or an SMG still can't break a round.
 
 Role-based kills earn shop credits. Killing teammates lowers your karma, which carries across rounds and can reduce your starting credits. Karma recovers over subsequent rounds.
 
@@ -38,7 +40,7 @@ The mission runs on Altis, Tanoa, Stratis, Livonia, and Malden. The release work
 
 ## Get a game running
 
-Bring a group for multiplayer. Arma 3 is required, along with access to your chosen terrain. CBA_A3, ACE3, ACRE2, and TFAR are optional, and the mission works without them.
+Bring a group for multiplayer. Arma 3 is required, along with access to your chosen terrain. No mods are required, and the mission runs fine on vanilla Arma. CBA_A3 and ACE3 are a good addition if your group already uses them, and a proximity-voice mod such as [ACRE2](https://ace3mod.com/wiki/user/getting-started-with-acre2.html) or [TFAR](https://github.com/task-force-arrowhead/task-force-radio) is strongly recommended over plain side/direct chat — TTT lives and dies on who was near whom when the shooting started, and real proximity voice makes that far easier to read than text chat or global comms. CBA_A3, ACE3, ACRE2, and TFAR work well together and are a solid combination for this mission.
 
 1. Subscribe on the Steam Workshop, or download the matching terrain package from the [GitHub releases](https://github.com/AdamWaldie/TroubleInArmaville/releases).
 2. For a manual install, unpack the package into your Arma 3 `MPMissions` folder.

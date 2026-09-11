@@ -27,7 +27,9 @@ Both shops sell radar and defibrillators alongside their other equipment. A Dete
 
 Each round picks a new arena on the current terrain, with loot to search for and airdrops to contest. Arma's weapons and ballistics give Traitors room to attack from a distance, while buildings and vegetation give them somewhere to hide afterwards.
 
-The mission supports Altis, Tanoa, Stratis, Livonia, and Malden through separate terrain packages. Weapons, clothing, and loot draw from your loaded mods, with vanilla equipment available too. CBA_A3, ACE3, ACRE2, and TFAR are optional.
+The mission supports Altis, Tanoa, Stratis, Livonia, and Malden through separate terrain packages. On start-up, the server scans whatever mods you've loaded and builds its weapon, gear, and clothing pools from them dynamically — there's no per-modpack preset to maintain, so it's workable with most weapon and uniform mods, from vanilla up to a full modpack like RHS or CUP. Every category has a vanilla fallback built in, so nothing breaks if a mod is missing a piece.
+
+No mods are required — the mission runs fine on vanilla Arma. CBA_A3 and ACE3 are a good addition if your group already runs them, and a proximity-voice mod such as ACRE2 or TFAR is strongly recommended over Arma's default chat — TTT is all about who was standing near whom when a shot rang out, and real positional voice makes that much easier to judge. CBA_A3, ACE3, ACRE2, and TFAR work well together and make a solid combination for this mission.
 
 Hosts can adjust round length, role assignment, arena size, loot, weather, and time of day. Karma carries between rounds: killing teammates can cost you starting credits in later rounds. The scoreboard tracks the round, and the role HUD includes a colourblind-safe palette and several crest styles.
 
