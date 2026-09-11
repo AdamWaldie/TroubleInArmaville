@@ -40,7 +40,7 @@ The mission runs on Altis, Tanoa, Stratis, Livonia, and Malden. The release work
 
 ## Get a game running
 
-Bring a group for multiplayer. Arma 3 is required, along with access to your chosen terrain. CBA_A3 and ACE3 are optional, and the mission works without them. For voice, plain Arma side/direct chat works fine, but a proximity-voice mod such as [ACRE2](https://ace3mod.com/wiki/user/getting-started-with-acre2.html) or [TFAR](https://github.com/task-force-arrowhead/task-force-radio) is strongly recommended — TTT lives and dies on who was near whom when the shooting started, and real proximity voice makes that far easier to read than text chat or global comms.
+Bring a group for multiplayer. Arma 3 is required, along with access to your chosen terrain. No mods are required, and the mission runs fine on vanilla Arma. CBA_A3 and ACE3 are a good addition if your group already uses them, and a proximity-voice mod such as [ACRE2](https://ace3mod.com/wiki/user/getting-started-with-acre2.html) or [TFAR](https://github.com/task-force-arrowhead/task-force-radio) is strongly recommended over plain side/direct chat — TTT lives and dies on who was near whom when the shooting started, and real proximity voice makes that far easier to read than text chat or global comms. CBA_A3, ACE3, ACRE2, and TFAR work well together and are a solid combination for this mission.
 
 1. Subscribe on the Steam Workshop, or download the matching terrain package from the [GitHub releases](https://github.com/AdamWaldie/TroubleInArmaville/releases).
 2. For a manual install, unpack the package into your Arma 3 `MPMissions` folder.
