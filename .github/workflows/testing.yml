@@ -10,6 +10,8 @@ jobs:
         run: python3 tools/ci/sqf_validator.py
       - name: Validate Config
         run: python3 tools/ci/config_style_checker.py
+      - name: Scan for hardcoded credentials
+        run: python3 tools/ci/secret_scanner.py
       - name: Check whitespace
         run: git diff --check HEAD
 

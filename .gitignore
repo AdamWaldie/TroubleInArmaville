@@ -1,3 +1,14 @@
 __pycache__/
 *.pyc
 .qa/
+
+# Never-commit-these: local credential files. publish_workshop.sh never
+# writes one of these itself (it only ever prompts interactively), but
+# ignoring the common names stops an editor autosave or a manually-created
+# one from ever showing up as a stageable file by accident.
+.env
+.env.*
+*.pem
+*.key
+secrets.json
+steam_credentials*

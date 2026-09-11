@@ -1,0 +1,11 @@
+#!/usr/bin/env bash
+# Blocks a commit that looks like it's about to check in a hardcoded
+# credential (Steam password, an API key, a private key...). See
+# tools/ci/secret_scanner.py for what it actually looks for.
+#
+# Not installed automatically - this repo doesn't force hooks onto anyone
+# who clones it. Enable it once per clone with:
+#   git config core.hooksPath tools/git-hooks
+set -euo pipefail
+cd "$(git rev-parse --show-toplevel)"
+python3 tools/ci/secret_scanner.py --staged
