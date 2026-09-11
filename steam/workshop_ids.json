@@ -1,5 +1,5 @@
 {
-  "_comment": "Steam Workshop published file IDs, one per terrain. 0 means the item has never been published - the workshop-publish workflow treats 0 as 'create a new item' and prints the assigned ID in its log. After a terrain's first successful publish, copy that ID in here and commit, or the next run creates a duplicate item instead of updating the existing one.",
+  "_comment": "Steam Workshop published file IDs, one per terrain. 0 means the item has never been published - tools/steam/publish_workshop.sh treats 0 as 'create a new item', and records the assigned ID here automatically (or tells you how to record it by hand if it couldn't parse steamcmd's output). Commit this file after a terrain's first successful publish, or the next run creates a duplicate item instead of updating the existing one.",
   "Altis": 0,
   "Tanoa": 0,
   "Stratis": 0,

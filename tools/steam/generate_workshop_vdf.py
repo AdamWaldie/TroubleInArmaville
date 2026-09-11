@@ -14,6 +14,17 @@ existing one. Passing a terrain's real ID here (from steam/workshop_ids.json)
 updates that item in place; passing 0 creates a new one and steamcmd prints
 the assigned ID in its output, which must then be recorded and committed
 before the next run.
+
+An update respects what's already on the Workshop item: title, previewfile,
+and visibility are only written into the VDF when creating a brand-new item
+(publishedfileid 0), since a key steamcmd receives always overwrites the
+live value - there's no "leave as-is" value to pass instead. On every run
+after creation, only description, changenote, and contentfolder go out, so a
+title you've since edited on the Workshop page, a cover image you've swapped
+there, or a visibility you've since flipped all survive an update untouched.
+The one deliberate exception is description: it always gets sent, even on an
+update, so steam/workshop_description.md stays the single source of truth
+for it rather than something that can drift once set at creation.
 """
 import argparse
 import json
@@ -47,29 +58,34 @@ def main() -> int:
         return 1
     published_file_id = ids[args.terrain]
 
+    is_new_item = not published_file_id
     description = Path(args.description_file).read_text()
-    title = f"Trouble In Armaville - {args.terrain}"
 
     lines = [
         '"workshopitem"',
         "{",
         f'\t"appid"\t\t"{APP_ID}"',
         f'\t"contentfolder"\t"{args.content_folder}"',
-        f'\t"previewfile"\t"{args.preview_file}"',
-        f'\t"visibility"\t"{args.visibility}"',
-        f'\t"title"\t\t"{escape_vdf_string(title)}"',
         f'\t"description"\t"{escape_vdf_string(description)}"',
         f'\t"changenote"\t"{escape_vdf_string(args.changenote)}"',
     ]
-    # publishedfileid "0" (create-new) is the one case where the key must be
-    # omitted rather than written as 0 - some steamcmd builds create a new
-    # item either way, but older ones only do so when the key is absent.
-    if published_file_id:
+    if is_new_item:
+        # Only set on creation - there's no "leave unchanged" value to send
+        # for these, so sending them on every update would overwrite
+        # whatever's since been changed by hand on the Workshop page.
+        title = f"Trouble In Armaville - {args.terrain}"
+        lines.append(f'\t"title"\t\t"{escape_vdf_string(title)}"')
+        lines.append(f'\t"previewfile"\t"{args.preview_file}"')
+        lines.append(f'\t"visibility"\t"{args.visibility}"')
+    else:
         lines.append(f'\t"publishedfileid"\t"{published_file_id}"')
     lines.append("}")
 
     Path(args.out).write_text("\n".join(lines) + "\n")
-    print(f"Wrote {args.out} for {args.terrain} (publishedfileid={published_file_id or 'NEW'})")
+    if is_new_item:
+        print(f"Wrote {args.out} for {args.terrain} (NEW item - title/preview/visibility will be set)")
+    else:
+        print(f"Wrote {args.out} for {args.terrain} (updating {published_file_id} - title/preview/visibility left untouched)")
     return 0
 
 
