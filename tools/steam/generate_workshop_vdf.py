@@ -43,7 +43,7 @@ def main() -> int:
 
     ids = json.loads(Path(args.ids_file).read_text())
     if args.terrain not in ids:
-        print(f"::error::No entry for terrain '{args.terrain}' in {args.ids_file}", file=sys.stderr)
+        print(f"Error: no entry for terrain '{args.terrain}' in {args.ids_file}", file=sys.stderr)
         return 1
     published_file_id = ids[args.terrain]
 
