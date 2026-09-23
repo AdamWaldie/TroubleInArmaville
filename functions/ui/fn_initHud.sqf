@@ -18,8 +18,19 @@ disableSerialization;
 // at its blank .hpp default forever. Only ever calling titleRsc when the
 // resource doesn't already exist keeps the SAME display alive for the whole
 // round, so every control reference taken anywhere stays valid.
+//
+// Shown on its own named cut layer, NOT via titleRsc. titleText/titleRsc/
+// titleObj all share ONE engine-wide title slot (see fn_warmupBar.sqf's
+// header), and Waldo_fnc_titleSequence's BIS_fnc_typeText is built on
+// titleText. The warmup (roundWarmupLength, 20s by default) and that typed
+// title card start at about the same moment, so whether the card was still
+// typing when gameOn flipped was roughly a coin toss - and when it was, its
+// next titleText evicted the whole HUD (badge, credits, timer, key hints) for
+// the rest of the round, with nothing ever re-showing it. A dedicated layer
+// from BIS_fnc_rscLayer can't be touched by any title effect, or by the
+// warmup bar's cutText on the default cut layer.
 if (isNull (uiNamespace getVariable ["TTTHud", displayNull])) then {
-	titleRsc ["TTTHud", "PLAIN", 1, false];
+	("Waldo_TTTHud" call BIS_fnc_rscLayer) cutRsc ["TTTHud", "PLAIN", 1, false];
 };
 waitUntil { !isNull (uiNamespace getVariable ["TTTHud", displayNull]) };
 private _display = uiNamespace getVariable "TTTHud";

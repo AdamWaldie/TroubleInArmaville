@@ -20,8 +20,8 @@
 // arrive late under network jitter.
 //
 // Self-healing against the display being recreated: fn_initHud.sqf now
-// guards its own titleRsc call so TTTHud is only ever created once (see the
-// comment there - repeat titleRsc calls for the same class recreate the
+// guards its own cutRsc call so TTTHud is only ever created once (see the
+// comment there - repeat cutRsc calls for the same class recreate the
 // display, which is what silently blanked this exact control before that
 // fix), but re-checking here too costs nothing and matches the same
 // isNull-guarded refresh already used by the credits-readout loop.

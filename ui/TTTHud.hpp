@@ -11,12 +11,11 @@ class RscTitles
 	// ============================================================================
 	// TTTWarmup - "Selecting Roles: N" during the pre-round warmup, in the same
 	// centre-top position/casing style as TTTHud's own round-timer bar (not the
-	// same titleRsc resource though: TTTHud doesn't exist yet at this point -
-	// role isn't assigned, so there's no badge/credits/keybinds to show - and
-	// this phase is over well before TTTHud is ever created, so the two never
-	// overlap; TTTHud's own titleRsc call simply evicts this one when the round
-	// goes live, same single-slot behaviour used deliberately here instead of
-	// worked around). Driven by Waldo_fnc_warmupBar.
+	// same resource though: TTTHud doesn't exist yet at this point - role isn't
+	// assigned, so there's no badge/credits/keybinds to show). Shown with cutRsc
+	// on the default cut layer and cleared by Waldo_fnc_warmupBar itself when
+	// warmup ends; TTTHud lives on its own named cut layer, so neither evicts
+	// the other.
 	// ============================================================================
 	class TTTWarmup {
 		idd = -1;
@@ -623,9 +622,9 @@ class RscTitles
 		// ========================================================================
 		// Ping picker (Waldo_fnc_pingWheelOpen/Render/Close). Hold T to show it,
 		// scroll to move the highlight, release T to fire it. Lives inside THIS
-		// same title resource (not a second titleRsc-shown class) and is just
-		// shown/hidden via ctrlShow - titleRsc only has one active slot, so a
-		// second titleRsc call for a separate class would silently evict this
+		// same resource (not a second class shown on its layer) and is just
+		// shown/hidden via ctrlShow - a layer only has one active slot, so a
+		// second resource shown on TTTHud's layer would silently evict this
 		// entire HUD (badge + key hints) the moment the picker first opened.
 		// ========================================================================
 		class Controls {

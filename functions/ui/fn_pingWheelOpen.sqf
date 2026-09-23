@@ -9,10 +9,10 @@
 // auto-detect ping. Waldo_fnc_pingWheelClose reads the final highlight on KeyUp
 // and fires it.
 //
-// The picker's controls live inside the SAME "TTTHud" title resource as the
-// role badge/key-hints panel (Waldo_fnc_initHud), not a second titleRsc-shown
-// class - titleRsc only has one active slot, so a second title resource would
-// silently evict the whole HUD the moment this first opened.
+// The picker's controls live inside the SAME "TTTHud" resource as the
+// role badge/key-hints panel (Waldo_fnc_initHud), not a second class shown on
+// its layer - a layer only has one active slot, so a second resource there
+// would silently evict the whole HUD the moment this first opened.
 //////////////////////////////////////////////////////////////////
 
 if (!hasInterface) exitWith {};

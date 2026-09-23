@@ -18,8 +18,8 @@
 // layer system, so this coexists with the mission's title-card animation
 // instead of fighting it.
 //
-// Being on a different layer than TTTHud also means TTTHud's own titleRsc
-// call does NOT evict this automatically the way same-layer titleRsc calls
+// Being on a different layer than TTTHud (its own named cut layer) also
+// means TTTHud's cutRsc call does NOT evict this automatically the way same-layer calls
 // would - every exit path below explicitly clears the cutRsc itself instead
 // of relying on that.
 //////////////////////////////////////////////////////////////////
@@ -54,4 +54,4 @@ while { !(missionNamespace getVariable ["gameOn", false]) } do {
 	sleep 0.25;
 };
 
-cutText ["", "PLAIN"];   // explicit clear - TTTHud's titleRsc call no longer does this for us (different layer)
+cutText ["", "PLAIN"];   // explicit clear - TTTHud's own cutRsc is on a different layer and won't do this for us
