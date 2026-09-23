@@ -54,7 +54,7 @@ _decoy setDamage 1;   // instantly a corpse
 // the prompt staying clickable (harmlessly) after the reveal, instead of
 // risking it never showing up in the first place.
 [_decoy, [
-	"<t color='#ffd23f'>Identify Body</t>",
+	["<t color='#ffd23f'>%1</t>", "STR_TIA_Action_IdentifyBody"],
 	{
 		params ["_target", "_caller"];
 		[_target, _caller] remoteExec ["Waldo_fnc_identifyBody", 2];
@@ -62,6 +62,6 @@ _decoy setDamage 1;   // instantly a corpse
 	nil, 4, true, false, "",
 	"alive _this",
 	2.5
-]] remoteExec ["addAction", 0, _decoy];
+]] remoteExec ["Waldo_fnc_addActionL", 0, _decoy];   // title localised per client
 
 [_decoy] spawn { params ["_d"]; sleep 60; if (!isNull _d) then { deleteVehicle _d }; };

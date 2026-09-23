@@ -4,11 +4,14 @@
 //////////////////////////////////////////////////////////////////
 
 private _missionTitle = getText (missionConfigFile >> "onLoadName");
-private _localeName = "Endless Traitorous Hellscape";
+// onLoadName is a "$STR_TIA_..." reference - getText normally resolves those
+// itself, but resolve it here too so a raw key can never reach the screen.
+if ((_missionTitle select [0, 5]) == "$STR_") then { _missionTitle = localize (_missionTitle select [1]); };
+private _localeName = localize "STR_TIA_Title_LocaleName";
 private _timeConfig = [dayTime, "ARRAY"] call BIS_fnc_timeToString;
-private _time = (_timeConfig select 0) + (_timeConfig select 1) + " hrs";
+private _time = format [localize "STR_TIA_Title_Hours", (_timeConfig select 0) + (_timeConfig select 1)];
 private _date = format ["%1/%2/%3", date select 2, date select 1, date select 0];
-private _localePos = format ["Grid %1, %2", mapGridPosition player, _localeName];
+private _localePos = format [localize "STR_TIA_Title_Grid", mapGridPosition player, _localeName];
 
 [
 	[

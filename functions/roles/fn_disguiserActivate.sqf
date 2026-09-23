@@ -49,8 +49,8 @@ player setVariable ["Waldo_disguiseToken", (player getVariable ["Waldo_disguiseT
 private _token = player getVariable ["Waldo_disguiseToken", 0];
 
 [
-	"DISGUISER", format ["You now look like %1 for %2s. Any DNA you leave behind will point to them too.", name _target, _dur],
-	"SUCCESS", 6, "TOP_RIGHT", "DISGUISE", "TRAITOR"
+	"STR_TIA_Disguiser_Title", ["STR_TIA_Disguiser_Active", name _target, _dur],
+	"SUCCESS", 6, "TOP_RIGHT", "DISGUISE", "STR_TIA_Role_Traitor"
 ] call Waldo_fnc_ShowUiNotification;
 
 [_token, _endAt] spawn {
@@ -82,7 +82,7 @@ private _token = player getVariable ["Waldo_disguiseToken", 0];
 		if (!isNull _ctrl) then {
 			private _remaining = ceil (_endAt - time);
 			_ctrl ctrlSetStructuredText parseText format [
-				"<t align='right' font='PuristaMedium' size='1.0' shadow='1' color='#D9AE34'>Disguised - %1s</t>", _remaining
+				"<t align='right' font='PuristaMedium' size='1.0' shadow='1' color='#D9AE34'>%1</t>", format [localize "STR_TIA_Disguiser_Countdown", _remaining]
 			];
 		};
 		sleep 1;
@@ -102,8 +102,8 @@ private _token = player getVariable ["Waldo_disguiseToken", 0];
 	if (alive player) then {
 		player setUnitLoadout (player getVariable ["Waldo_disguiseOwnLoadout", getUnitLoadout player]);
 		[
-			"DISGUISER", "Your disguise has worn off.",
-			"INFO", 5, "TOP_RIGHT", "DISGUISE", "TRAITOR"
+			"STR_TIA_Disguiser_Title", "STR_TIA_Disguiser_WornOff",
+			"INFO", 5, "TOP_RIGHT", "DISGUISE", "STR_TIA_Role_Traitor"
 		] call Waldo_fnc_ShowUiNotification;
 	};
 };

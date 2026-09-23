@@ -18,7 +18,9 @@ STAGE="${1:?usage: stage_mission.sh <target-dir>}"
 # Extensions Arma actually needs at runtime, plus the two allowed documents.
 ALLOWED_EXT="sqf sqm ext hpp paa jpg jpeg ogg ogv wss wav p3d rvmat"
 # Matched on BASENAME, so a README beside the code it documents is fine too.
-ALLOWED_FILES="LICENSE LICENSE.md LICENSE.txt README README.md"
+# stringtable.xml is named rather than allowing .xml outright: it's the one XML
+# file Arma reads at runtime (localisation), and it must sit at the mission root.
+ALLOWED_FILES="LICENSE LICENSE.md LICENSE.txt README README.md stringtable.xml"
 # Top-level entries that are development-only and must never ship.
 # Development-only top-level directories. wiki/ and steam/ are documentation and
 # store assets, terrains/ is source terrain material - none are loaded by the
@@ -63,8 +65,9 @@ if ((${#unexpected[@]})); then
   exit 1
 fi
 
-# mission.sqm and description.ext are what make this a mission at all.
-for required in mission.sqm description.ext; do
+# mission.sqm and description.ext are what make this a mission at all, and every
+# player-facing string lives in stringtable.xml (a missing one shows raw keys).
+for required in mission.sqm description.ext stringtable.xml; do
   [[ -f "$STAGE/$required" ]] || { echo "::error::$required missing from the staged mission"; exit 1; }
 done
 

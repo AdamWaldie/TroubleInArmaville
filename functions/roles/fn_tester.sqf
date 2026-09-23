@@ -16,27 +16,29 @@
 private _target = cursorTarget;
 
 if (isNull _target || {!(_target isKindOf "CAManBase")}) exitWith {
-	["PORTABLE TESTER", "No valid target.", "WARNING", 3, "BOTTOM_LEFT", "TESTER", "TESTER"] call Waldo_fnc_ShowUiNotification;
+	["STR_TIA_Tester_Title", "STR_TIA_Tester_NoTarget", "WARNING", 3, "BOTTOM_LEFT", "TESTER", "STR_TIA_Tester_Source"] call Waldo_fnc_ShowUiNotification;
 	false
 };
 
 if ((player distance _target) > 3) exitWith {
-	["PORTABLE TESTER", "Move closer to test.", "WARNING", 3, "BOTTOM_LEFT", "TESTER", "TESTER"] call Waldo_fnc_ShowUiNotification;
+	["STR_TIA_Tester_Title", "STR_TIA_Tester_MoveCloser", "WARNING", 3, "BOTTOM_LEFT", "TESTER", "STR_TIA_Tester_Source"] call Waldo_fnc_ShowUiNotification;
 	false
 };
 
-["PORTABLE TESTER", "Testing...", "INFO", 2, "BOTTOM_LEFT", "TESTER", "TESTER"] call Waldo_fnc_ShowUiNotification;
+["STR_TIA_Tester_Title", "STR_TIA_Tester_Testing", "INFO", 2, "BOTTOM_LEFT", "TESTER", "STR_TIA_Tester_Source"] call Waldo_fnc_ShowUiNotification;
 
 if (isPlayer _target && {alive _target}) then {
 	private _targetRole = _target getVariable ["role", "Innocent"];
-	private _msg = "You are being tested with a Portable Tester.";
+	// Keys, not text: this card is drawn on the TARGET's machine, so it has
+	// to be localised there, in their language rather than ours.
+	private _msg = "STR_TIA_Tester_BeingTested";
 	private _state = "WARNING";
 	if (_targetRole == "Traitor") then {
-		_msg = _msg + " This will reveal you as a Traitor to the Detective.";
+		_msg = "STR_TIA_Tester_BeingTestedTraitor";
 		_state = "ERROR";
 	};
 	[
-		"BEING TESTED", _msg, _state, 6, "TOP_RIGHT", "TESTED", "TESTER"
+		"STR_TIA_Tester_BeingTestedTitle", _msg, _state, 6, "TOP_RIGHT", "TESTED", "STR_TIA_Tester_Source"
 	] remoteExec ["Waldo_fnc_ShowUiNotification", _target];
 };
 
@@ -58,8 +60,8 @@ if (isPlayer _target && {alive _target}) then {
 		"#" + ([_c select 0] call _byte) + ([_c select 1] call _byte) + ([_c select 2] call _byte)
 	};
 	private _roleHex = [_roleColor] call _hex;
-	["PORTABLE TESTER", format ["Test complete - <t color='%1'>%2</t>.", _roleHex, _role],
-		"SUCCESS", 4, "BOTTOM_LEFT", "TESTER", "TESTER"] call Waldo_fnc_ShowUiNotification;
+	["STR_TIA_Tester_Title", format [localize "STR_TIA_Tester_Complete", format ["<t color='%1'>%2</t>", _roleHex, localize ("STR_TIA_Role_" + _role)]],
+		"SUCCESS", 4, "BOTTOM_LEFT", "TESTER", "STR_TIA_Tester_Source"] call Waldo_fnc_ShowUiNotification;
 };
 
 true

@@ -23,7 +23,9 @@ private _hex = {
 private _colorHex = [_color] call _hex;
 
 {
-	_x params ["_label", "_desc"];
+	_x params ["", "_labelKey", "_descKey"];
+	private _label = localize _labelKey;
+	private _desc = localize _descKey;
 	private _ctrl = _display displayCtrl (3510 + _forEachIndex);
 	private _isSel = _forEachIndex == _sel;
 	if (_isSel) then {

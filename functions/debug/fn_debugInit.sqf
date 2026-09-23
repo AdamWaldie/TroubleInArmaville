@@ -438,10 +438,10 @@ private _setCrestStyle = {
 	["Test Player", player getVariable ["role", "Innocent"], 5] call Waldo_fnc_mvpCelebrate;
 }] call Waldo_debugRegister;
 ["HUD", "UI: Simulate Airdrop (Golden)", "Fires the exact card a real golden airdrop shows, without spawning one", "local", {
-	["GOLDEN AIRDROP", "A GOLDEN WEAPONS airdrop is falling!", "WARNING", 6, "TOP", "AIRDROP", "SUPPLY"] call Waldo_fnc_ShowUiNotification;
+	["STR_TIA_Airdrop_GoldenTitle", "STR_TIA_Airdrop_GoldenWeapons", "WARNING", 6, "TOP", "AIRDROP", "STR_TIA_Airdrop_Source"] call Waldo_fnc_ShowUiNotification;
 }] call Waldo_debugRegister;
 ["HUD", "UI: Simulate Airdrop (Supply)", "Fires the exact card a real supply airdrop shows, without spawning one", "local", {
-	["AIRDROP INBOUND", "A supply airdrop is falling!", "INFO", 5, "TOP", "AIRDROP", "SUPPLY"] call Waldo_fnc_ShowUiNotification;
+	["STR_TIA_Airdrop_InboundTitle", "STR_TIA_Airdrop_InboundBody", "INFO", 5, "TOP", "AIRDROP", "STR_TIA_Airdrop_Source"] call Waldo_fnc_ShowUiNotification;
 }] call Waldo_debugRegister;
 
 // Test Dummies

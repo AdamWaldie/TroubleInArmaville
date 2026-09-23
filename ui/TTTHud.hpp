@@ -676,7 +676,7 @@ class RscTitles
 					};
 					class pwTitle: RscText {
 						idc = -1;
-						text = "PING  -  scroll to choose";
+						text = "$STR_TIA_Ui_PingHeader";
 						x = 0; y = 0;
 						w = 0.2 * safezoneW;
 						h = 0.036 * safezoneH;
@@ -856,7 +856,7 @@ class WaldoShop {
 		};
 		class shopTitle: RscText {
 			idc = 1100;
-			text = "Shop";
+			text = "$STR_TIA_Ui_Shop";
 			x = safezoneX + (0.295 * safezoneW);
 			y = safezoneY + (0.18 * safezoneH);
 			w = 0.26 * safezoneW;
@@ -870,7 +870,7 @@ class WaldoShop {
 		};
 		class shopCredits: RscText {
 			idc = 1101;
-			text = "0 credits";
+			text = "$STR_TIA_Ui_ZeroCredits";
 			x = safezoneX + (0.44 * safezoneW);
 			y = safezoneY + (0.18 * safezoneH);
 			w = 0.265 * safezoneW;
@@ -938,7 +938,7 @@ class WaldoShop {
 		};
 		class shopPurchTitle: RscText {
 			idc = 1105;
-			text = "Purchased";
+			text = "$STR_TIA_Ui_Purchased";
 			x = safezoneX + (0.735 * safezoneW);
 			y = safezoneY + (0.18 * safezoneH);
 			w = 0.19 * safezoneW;
@@ -996,7 +996,7 @@ class WaldoShop {
 		};
 		class shopClose: RscButton {
 			idc = 2;
-			text = "CLOSE [ESC]";
+			text = "$STR_TIA_Ui_CloseEsc";
 			x = safezoneX + (0.60 * safezoneW);
 			y = safezoneY + (0.775 * safezoneH);
 			w = 0.10 * safezoneW;
@@ -1098,7 +1098,7 @@ class WaldoStylePicker {
 		// sharing this row.
 		class spTitle: RscText {
 			idc = 1590;
-			text = "Select Role UI Style";
+			text = "$STR_TIA_Ui_SelectStyle";
 			x = safezoneX + (0.32 * safezoneW);
 			y = safezoneY + (0.16 * safezoneH);
 			w = 0.36 * safezoneW;
@@ -1183,15 +1183,15 @@ class WaldoStylePicker {
 		class sp8Btn: RscButton { idc = 1648; text = ""; x = SP_BASEX + (2 * SP_COLSTEP); y = SP_BASEY + (2 * SP_ROWSTEP); w = SP_CARDW; h = SP_CARDH; colorBackground[] = {0,0,0,0}; colorBackgroundActive[] = {1,1,1,0.08}; colorBackgroundDisabled[] = {0,0,0,0}; colorFocused[] = {0,0,0,0}; colorShadow[] = {0,0,0,0}; colorBorder[] = {0,0,0,0}; borderSize = 0; offsetX = 0; offsetY = 0; offsetPressedX = 0; offsetPressedY = 0; colorText[] = {0,0,0,0}; };
 
 		// Declared last: on top of the click targets, so nothing can paint over them.
-		class sp0Label: RscText { idc = 1620; text = "Field Medallion"; x = SP_BASEX; y = SP_BASEY; w = SP_CARDW; h = SP_CARDH; colorBackground[] = {0,0,0,0}; colorText[] = {0.95,0.93,0.86,1}; style = ST_CENTER; font = "PuristaBold"; sizeEx = 0.022 * safezoneH; shadow = 1; };
-		class sp1Label: RscText { idc = 1621; text = "Struck Coin"; x = SP_BASEX + SP_COLSTEP; y = SP_BASEY; w = SP_CARDW; h = SP_CARDH; colorBackground[] = {0,0,0,0}; colorText[] = {0.95,0.93,0.86,1}; style = ST_CENTER; font = "PuristaBold"; sizeEx = 0.022 * safezoneH; shadow = 1; };
-		class sp2Label: RscText { idc = 1622; text = "Enamel Pin"; x = SP_BASEX + (2 * SP_COLSTEP); y = SP_BASEY; w = SP_CARDW; h = SP_CARDH; colorBackground[] = {0,0,0,0}; colorText[] = {0.95,0.93,0.86,1}; style = ST_CENTER; font = "PuristaBold"; sizeEx = 0.022 * safezoneH; shadow = 1; };
-		class sp3Label: RscText { idc = 1623; text = "Dog Tag"; x = SP_BASEX; y = SP_BASEY + SP_ROWSTEP; w = SP_CARDW; h = SP_CARDH; colorBackground[] = {0,0,0,0}; colorText[] = {0.95,0.93,0.86,1}; style = ST_CENTER; font = "PuristaBold"; sizeEx = 0.022 * safezoneH; shadow = 1; };
-		class sp4Label: RscText { idc = 1624; text = "Unit Patch"; x = SP_BASEX + SP_COLSTEP; y = SP_BASEY + SP_ROWSTEP; w = SP_CARDW; h = SP_CARDH; colorBackground[] = {0,0,0,0}; colorText[] = {0.95,0.93,0.86,1}; style = ST_CENTER; font = "PuristaBold"; sizeEx = 0.022 * safezoneH; shadow = 1; };
-		class sp5Label: RscText { idc = 1625; text = "Crate Stencil"; x = SP_BASEX + (2 * SP_COLSTEP); y = SP_BASEY + SP_ROWSTEP; w = SP_CARDW; h = SP_CARDH; colorBackground[] = {0,0,0,0}; colorText[] = {0.95,0.93,0.86,1}; style = ST_CENTER; font = "PuristaBold"; sizeEx = 0.022 * safezoneH; shadow = 1; };
-		class sp6Label: RscText { idc = 1626; text = "Case File"; x = SP_BASEX; y = SP_BASEY + (2 * SP_ROWSTEP); w = SP_CARDW; h = SP_CARDH; colorBackground[] = {0,0,0,0}; colorText[] = {0.95,0.93,0.86,1}; style = ST_CENTER; font = "PuristaBold"; sizeEx = 0.022 * safezoneH; shadow = 1; };
-		class sp7Label: RscText { idc = 1627; text = "Chalk Mark"; x = SP_BASEX + SP_COLSTEP; y = SP_BASEY + (2 * SP_ROWSTEP); w = SP_CARDW; h = SP_CARDH; colorBackground[] = {0,0,0,0}; colorText[] = {0.95,0.93,0.86,1}; style = ST_CENTER; font = "PuristaBold"; sizeEx = 0.022 * safezoneH; shadow = 1; };
-		class sp8Label: RscText { idc = 1628; text = "Evidence Tag"; x = SP_BASEX + (2 * SP_COLSTEP); y = SP_BASEY + (2 * SP_ROWSTEP); w = SP_CARDW; h = SP_CARDH; colorBackground[] = {0,0,0,0}; colorText[] = {0.95,0.93,0.86,1}; style = ST_CENTER; font = "PuristaBold"; sizeEx = 0.022 * safezoneH; shadow = 1; };
+		class sp0Label: RscText { idc = 1620; text = "$STR_TIA_Style_FieldMedallion"; x = SP_BASEX; y = SP_BASEY; w = SP_CARDW; h = SP_CARDH; colorBackground[] = {0,0,0,0}; colorText[] = {0.95,0.93,0.86,1}; style = ST_CENTER; font = "PuristaBold"; sizeEx = 0.022 * safezoneH; shadow = 1; };
+		class sp1Label: RscText { idc = 1621; text = "$STR_TIA_Style_StruckCoin"; x = SP_BASEX + SP_COLSTEP; y = SP_BASEY; w = SP_CARDW; h = SP_CARDH; colorBackground[] = {0,0,0,0}; colorText[] = {0.95,0.93,0.86,1}; style = ST_CENTER; font = "PuristaBold"; sizeEx = 0.022 * safezoneH; shadow = 1; };
+		class sp2Label: RscText { idc = 1622; text = "$STR_TIA_Style_EnamelPin"; x = SP_BASEX + (2 * SP_COLSTEP); y = SP_BASEY; w = SP_CARDW; h = SP_CARDH; colorBackground[] = {0,0,0,0}; colorText[] = {0.95,0.93,0.86,1}; style = ST_CENTER; font = "PuristaBold"; sizeEx = 0.022 * safezoneH; shadow = 1; };
+		class sp3Label: RscText { idc = 1623; text = "$STR_TIA_Style_DogTag"; x = SP_BASEX; y = SP_BASEY + SP_ROWSTEP; w = SP_CARDW; h = SP_CARDH; colorBackground[] = {0,0,0,0}; colorText[] = {0.95,0.93,0.86,1}; style = ST_CENTER; font = "PuristaBold"; sizeEx = 0.022 * safezoneH; shadow = 1; };
+		class sp4Label: RscText { idc = 1624; text = "$STR_TIA_Style_UnitPatch"; x = SP_BASEX + SP_COLSTEP; y = SP_BASEY + SP_ROWSTEP; w = SP_CARDW; h = SP_CARDH; colorBackground[] = {0,0,0,0}; colorText[] = {0.95,0.93,0.86,1}; style = ST_CENTER; font = "PuristaBold"; sizeEx = 0.022 * safezoneH; shadow = 1; };
+		class sp5Label: RscText { idc = 1625; text = "$STR_TIA_Style_CrateStencil"; x = SP_BASEX + (2 * SP_COLSTEP); y = SP_BASEY + SP_ROWSTEP; w = SP_CARDW; h = SP_CARDH; colorBackground[] = {0,0,0,0}; colorText[] = {0.95,0.93,0.86,1}; style = ST_CENTER; font = "PuristaBold"; sizeEx = 0.022 * safezoneH; shadow = 1; };
+		class sp6Label: RscText { idc = 1626; text = "$STR_TIA_Style_CaseFile"; x = SP_BASEX; y = SP_BASEY + (2 * SP_ROWSTEP); w = SP_CARDW; h = SP_CARDH; colorBackground[] = {0,0,0,0}; colorText[] = {0.95,0.93,0.86,1}; style = ST_CENTER; font = "PuristaBold"; sizeEx = 0.022 * safezoneH; shadow = 1; };
+		class sp7Label: RscText { idc = 1627; text = "$STR_TIA_Style_ChalkMark"; x = SP_BASEX + SP_COLSTEP; y = SP_BASEY + (2 * SP_ROWSTEP); w = SP_CARDW; h = SP_CARDH; colorBackground[] = {0,0,0,0}; colorText[] = {0.95,0.93,0.86,1}; style = ST_CENTER; font = "PuristaBold"; sizeEx = 0.022 * safezoneH; shadow = 1; };
+		class sp8Label: RscText { idc = 1628; text = "$STR_TIA_Style_EvidenceTag"; x = SP_BASEX + (2 * SP_COLSTEP); y = SP_BASEY + (2 * SP_ROWSTEP); w = SP_CARDW; h = SP_CARDH; colorBackground[] = {0,0,0,0}; colorText[] = {0.95,0.93,0.86,1}; style = ST_CENTER; font = "PuristaBold"; sizeEx = 0.022 * safezoneH; shadow = 1; };
 		// Colourblind-safe palette toggle - Waldo_accessibilityMode in
 		// profileNamespace, read by Waldo_roleColor itself (fn_initShops.sqf),
 		// so this one toggle covers every caller of that function (HUD, buy
@@ -1212,7 +1212,7 @@ class WaldoStylePicker {
 		};
 		class spClose: RscButton {
 			idc = 1599;
-			text = "CLOSE [ESC]";
+			text = "$STR_TIA_Ui_CloseEsc";
 			x = safezoneX + (0.575 * safezoneW);
 			y = safezoneY + (0.80 * safezoneH);
 			w = 0.10 * safezoneW;
@@ -1403,7 +1403,7 @@ class WaldoScore {
 		};
 		class scTitle: RscText {
 			idc = 3301;
-			text = "Round Scoreboard";
+			text = "$STR_TIA_Ui_RoundScoreboard";
 			x = safezoneX + (0.25 * safezoneW);
 			y = safezoneY + (0.17 * safezoneH);
 			w = 0.50 * safezoneW;
@@ -1465,7 +1465,7 @@ class WaldoScore {
 		};
 		class scBriefTitle: RscText {
 			idc = -1;
-			text = "Your Briefing";
+			text = "$STR_TIA_Ui_YourBriefing";
 			x = safezoneX + (0.756 * safezoneW);
 			y = safezoneY + (0.17 * safezoneH);
 			w = 0.16 * safezoneW;
@@ -1511,7 +1511,7 @@ class WaldoScore {
 		};
 		class scKbTitle: RscText {
 			idc = -1;
-			text = "Keybinds";
+			text = "$STR_TIA_Ui_Keybinds";
 			x = safezoneX + (0.756 * safezoneW);
 			y = safezoneY + (0.17 * safezoneH) + (0.332 * safezoneH);
 			w = 0.16 * safezoneW;
@@ -1567,7 +1567,7 @@ class WaldoScore {
 		};
 		class scClose: RscButton {
 			idc = 2;
-			text = "CLOSE [K]";
+			text = "$STR_TIA_Ui_CloseK";
 			x = safezoneX + (0.64 * safezoneW);
 			y = safezoneY + (0.785 * safezoneH);
 			w = 0.10 * safezoneW;
@@ -1650,7 +1650,7 @@ class WaldoDisguise {
 		};
 		class wdTitle: RscText {
 			idc = 3800;
-			text = "Disguise As...";
+			text = "$STR_TIA_Ui_DisguiseAs";
 			x = safezoneX + (0.35 * safezoneW);
 			y = safezoneY + (0.22 * safezoneH);
 			w = 0.30 * safezoneW;
@@ -1692,7 +1692,7 @@ class WaldoDisguise {
 		};
 		class wdClose: RscButton {
 			idc = 2;
-			text = "CANCEL [ESC]";
+			text = "$STR_TIA_Ui_CancelEsc";
 			x = safezoneX + (0.44 * safezoneW);
 			y = safezoneY + (0.72 * safezoneH);
 			w = 0.12 * safezoneW;

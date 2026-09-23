@@ -40,7 +40,7 @@ private _boxY = safezoneY + (0.015 * safezoneH);
 private _boxW = 0.36 * safezoneW;
 private _boxH = 0.062 * safezoneH;
 
-_textCtrl ctrlSetText "Selecting Roles: 0";
+_textCtrl ctrlSetText format [localize "STR_TIA_Warmup_SelectingRoles", 0];
 private _textH = ctrlTextHeight _textCtrl;
 _textCtrl ctrlSetPosition [_boxX, _boxY + ((_boxH - _textH) / 2), _boxW, _textH];
 _textCtrl ctrlCommit 0;
@@ -49,7 +49,7 @@ while { !(missionNamespace getVariable ["gameOn", false]) } do {
 	if (missionNamespace getVariable ["Waldo_debugSkipWarmup", false]) exitWith {};
 	private _endAt = missionNamespace getVariable ["Waldo_warmupEndAt", time];
 	private _remaining = ceil (0 max (_endAt - time));
-	_textCtrl ctrlSetText format ["Selecting Roles: %1", _remaining];
+	_textCtrl ctrlSetText format [localize "STR_TIA_Warmup_SelectingRoles", _remaining];
 	if (_remaining <= 0) exitWith {};   // warmup's over - TTTHud takes over at round-live
 	sleep 0.25;
 };

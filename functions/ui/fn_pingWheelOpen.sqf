@@ -23,12 +23,15 @@ disableSerialization;
 waitUntil { !isNull (uiNamespace getVariable ["TTTHud", displayNull]) };
 private _display = uiNamespace getVariable "TTTHud";
 
+// [kind id, label key, description key] - the kind id is what
+// Waldo_fnc_traitorPing/Waldo_fnc_pingShow switch on, so it stays English;
+// only the label/description are localised (in Waldo_fnc_pingWheelRender).
 Waldo_pingWheelOptions = [
-	["Target",        "track who you're aiming at"],
-	["Location",      "mark where you're looking"],
-	["Danger",        "warn of a threat here"],
-	["Regroup Here",  "call traitors to your position"],
-	["Enemy Spotted", "flag a suspicious player"]
+	["Target",        "STR_TIA_Ping_Target",   "STR_TIA_Ping_TargetDesc"],
+	["Location",      "STR_TIA_Ping_Location", "STR_TIA_Ping_LocationDesc"],
+	["Danger",        "STR_TIA_Ping_Danger",   "STR_TIA_Ping_DangerDesc"],
+	["Regroup Here",  "STR_TIA_Ping_Regroup",  "STR_TIA_Ping_RegroupDesc"],
+	["Enemy Spotted", "STR_TIA_Ping_Enemy",    "STR_TIA_Ping_EnemyDesc"]
 ];
 
 private _ct = cursorTarget;

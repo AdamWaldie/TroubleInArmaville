@@ -37,6 +37,27 @@ Trouble in Terrorist Town is a hidden-role social-deduction round game:
 | `ui` | `initShops` (preInit), `initHud`, `drawRoleIcons`, `openBuyMenu`, `buyItem`, `titleSequence`, `pregameScreen`, `scoreboard`, `mvpCelebrate` | client |
 | `roles` | `traitorRadar`, `detectiveRadar`, `warpSmoke`, `suicideBomb`, `flowerPower`, `tester`, `revive`, `healthStation`, `holster`, `removeBody`, `dnaScanner`, `placeC4`, `traitorPing`, `pingShow`, `deadRinger`, `deadRingerTrigger` | client |
 | `debug` | `debugInit` (preInit registry + API), `debugMenu` (client renderer), `debugExec` (server dispatch), `effectivePlayerCount` | every machine / client / server |
+| `lang` | `localize` (resolves keys / `[fmt, args]`), `chat`, `hintL`, `addActionL` (per-client localised remoteExec targets) | every machine / client |
+
+## Localisation
+
+All player-facing text lives in `stringtable.xml` at the mission root, as
+`STR_TIA_*` keys. Arma picks each player's own game language automatically
+and falls back to English for anything untranslated.
+
+Text is localised on the machine that **displays** it, never on the sender.
+The server sends keys (or `["STR_TIA_Fmt", arg1, ...]` arrays, whose args
+can themselves be keys) and the receiving client resolves them with
+`Waldo_fnc_localize`. `Waldo_fnc_ShowUiNotification` and
+`Waldo_fnc_topBarAnnounce` do this for you; for chat, hints and scroll
+actions, remoteExec `Waldo_fnc_chat`, `Waldo_fnc_hintL` or
+`Waldo_fnc_addActionL` instead of the raw `systemChat`/`hint`/`addAction`
+commands. Config text (`description.ext`, `ui/*.hpp`) uses `"$STR_TIA_..."`.
+
+Role names, shop item names, ping kinds and similar values stay English
+internally (they're ids that code compares); only the text drawn on screen
+is localised. `tools/ci/stringtable_checker.py` fails CI if code references
+a key that doesn't exist or a translation breaks its `%n` placeholders.
 
 ## Equipment — dynamic, intent-aware arsenal
 

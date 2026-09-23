@@ -56,7 +56,9 @@ private _rowFor = {
 		|| (_role == "Detective")
 		|| {_myRole == "Traitor" && {(_p in _traitors) || {_role == "Jester"}}};
 
-	private _roleTxt = if (_reveal) then { toUpper (_role + (["", " (confirmed)"] select _revealed)) } else { "UNKNOWN" };
+	private _roleTxt = if (_reveal) then {
+		toUpper ((localize ("STR_TIA_Role_" + _role)) + (["", " " + localize "STR_TIA_Score_Confirmed"] select _revealed))
+	} else { localize "STR_TIA_Score_Unknown" };
 	// Waldo_roleColorHex, not a locally hardcoded map - this used to be its
 	// own switch with fixed hex values, which meant the scoreboard's role
 	// colours silently ignored the colourblind-accessibility setting every
@@ -64,11 +66,11 @@ private _rowFor = {
 	// wheel) already respects.
 	private _hex     = if (_reveal) then { [_role] call Waldo_roleColorHex } else { "#9EA290" };
 	private _status  = if (_alive) then {
-		"<t color='#6FCB74'>ALIVE</t>"
+		format ["<t color='#6FCB74'>%1</t>", localize "STR_TIA_Score_Alive"]
 	} else {
-		if (_found) then { "<t color='#F2BE55'>FOUND</t>" } else { "<t color='#9EA290'>MISSING</t>" };
+		if (_found) then { format ["<t color='#F2BE55'>%1</t>", localize "STR_TIA_Score_Found"] } else { format ["<t color='#9EA290'>%1</t>", localize "STR_TIA_Score_Missing"] };
 	};
-	private _killsTxt = if (_viewerIsSpectator) then { format ["<t color='#F2BE55'>%1</t> kills", _kills] } else { "" };
+	private _killsTxt = if (_viewerIsSpectator) then { format [localize "STR_TIA_Score_Kills", format ["<t color='#F2BE55'>%1</t>", _kills]] } else { "" };
 
 	format [
 		"<t size='1.05' color='#F2EFE3'>%1</t>    %2    <t color='%3'>%4</t>    %5<br/>",
@@ -81,7 +83,7 @@ private _live = allPlayers select { alive _x };
 private _dead = allPlayers select { !alive _x };
 private _body = "";
 { _body = _body + ([_x] call _rowFor); } forEach (_live + _dead);
-if (_body == "") then { _body = "<t color='#9EA290'>No players.</t>"; };
+if (_body == "") then { _body = format ["<t color='#9EA290'>%1</t>", localize "STR_TIA_Score_NoPlayers"]; };
 
 createDialog "WaldoScore";
 waitUntil { !isNull (uiNamespace getVariable ["WaldoScore", displayNull]) };
@@ -98,7 +100,7 @@ _display displayAddEventHandler ["KeyDown", { if ((_this select 1) == 37) then {
 // this count, reading as "the scoreboard does nothing for it."
 private _confirmedDead = { !alive _x && {_x getVariable ["Waldo_identified", false]} } count allPlayers;
 (_display displayCtrl 3301) ctrlSetText format [
-	"ROUND SCOREBOARD    -    %1 ALIVE / %2 TOTAL    -    %3 CONFIRMED DEAD",
+	localize "STR_TIA_Score_Header",
 	count _live, count allPlayers, _confirmedDead
 ];
 (_display displayCtrl 3300) ctrlSetStructuredText parseText _body;

@@ -23,11 +23,11 @@ private _colorHex = [_role] call Waldo_roleColorHex;
 private _typeLabel = {
 	params ["_t"];
 	switch (_t) do {
-		case "weapon":     { "Weapon" };
-		case "passive":    { "Passive" };
+		case "weapon":     { localize "STR_TIA_Buy_TypeWeapon" };
+		case "passive":    { localize "STR_TIA_Buy_TypePassive" };
 		// Which of Y/U/J actually fires this depends on key assignment (see the
 		// Purchased panel), so this can't hardcode a specific key.
-		case "activation": { "Activation - assign a key in the Purchased panel" };
+		case "activation": { localize "STR_TIA_Buy_TypeActivation" };
 		default            { _t };
 	};
 };
@@ -38,15 +38,15 @@ private _display = uiNamespace getVariable "WaldoShop";
 
 // --- Header: a neutral dark bar with a thin stripe tinted to the role colour ---
 (_display displayCtrl 1108) ctrlSetBackgroundColor [_color select 0, _color select 1, _color select 2, 1];
-(_display displayCtrl 1100) ctrlSetText (format ["%1 ARMORY", toUpper _role]);
+(_display displayCtrl 1100) ctrlSetText (format [localize "STR_TIA_Buy_Armory", toUpper localize ("STR_TIA_Role_" + _role)]);
 
 private _credits = player getVariable ["points", 0];
-(_display displayCtrl 1101) ctrlSetText (format ["%1 CREDITS", _credits]);
+(_display displayCtrl 1101) ctrlSetText (format [localize "STR_TIA_Buy_Credits", _credits]);
 
 // --- Default footer hint ---
-(_display displayCtrl 1103) ctrlSetStructuredText parseText (
-	"<t size='1.0' color='#9EA290'>Hover an item for details.  Click to buy.  [ESC] Close.</t>"
-);
+(_display displayCtrl 1103) ctrlSetStructuredText parseText format [
+	"<t size='1.0' color='#9EA290'>%1</t>", localize "STR_TIA_Buy_FooterHint"
+];
 
 // --- Purchased-this-round panel (what you already own + how to use it) ---
 [_display] call Waldo_shopRenderPurchased;
@@ -76,11 +76,15 @@ private _owned = player getVariable ["Waldo_purchases", []];
 	// credits on a passive with nothing to attach to.
 	private _hasRequirement = (_requires == "") || { (_owned findIf { (_x select 1) == _requires }) >= 0 };
 	private _afford = (_credits >= _cost) && _hasRequirement;
+	// Catalog entries hold stringtable keys - localise for display only.
+	private _nameL = localize _name;
+	private _tipL = localize _tip;
+	private _requiresL = if (_requires == "") then { "" } else { localize _requires };
 
 	private _btn = _display ctrlCreate ["RscButton", 2000 + _i, _group];
 	_btn ctrlSetPosition [_cx * (_bw + _gapX), _cy * (_bh + _gapY), _bw, _bh];
-	_btn ctrlSetText (format ["%1      %2 cr", _name, _cost]);
-	_btn ctrlSetTooltip (if (_hasRequirement) then { _tip } else { format ["Requires %1 - %2", _requires, _tip] });
+	_btn ctrlSetText (format [localize "STR_TIA_Buy_CardLabel", _nameL, _cost]);
+	_btn ctrlSetTooltip (if (_hasRequirement) then { _tipL } else { format [localize "STR_TIA_Buy_RequiresTip", _requiresL, _tipL] });
 	_btn ctrlSetFontHeight (0.85 * (_bh min (0.04 * safezoneH)));
 
 	if (_afford) then {
@@ -94,11 +98,11 @@ private _owned = player getVariable ["Waldo_purchases", []];
 	// Pre-format the hover description shown in the footer (idc 1103).
 	private _afHex = ["#F2BE55", "#E4514B"] select (!_afford);
 	private _reqLine = if (_hasRequirement) then { "" } else {
-		format ["<br/><t size='0.9' color='#E4514B'>Requires %1 first</t>", _requires]
+		format ["<br/><t size='0.9' color='#E4514B'>%1</t>", format [localize "STR_TIA_Buy_RequiresFirst", _requiresL]]
 	};
 	_btn setVariable ["descText", format [
-		"<t size='1.3' color='%1'>%2</t>   <t size='1.1' color='%3'>%4 cr</t>   <t size='0.9' color='#9EA290'>%5</t><br/><br/><t size='1.05'>%6</t>%7",
-		_colorHex, _name, _afHex, _cost, ([_type] call _typeLabel), _tip, _reqLine
+		"<t size='1.3' color='%1'>%2</t>   <t size='1.1' color='%3'>%4</t>   <t size='0.9' color='#9EA290'>%5</t><br/><br/><t size='1.05'>%6</t>%7",
+		_colorHex, _nameL, _afHex, format [localize "STR_TIA_Buy_CostCr", _cost], ([_type] call _typeLabel), _tipL, _reqLine
 	]];
 	_btn setVariable ["role", _role];
 	_btn setVariable ["itemIndex", _i];

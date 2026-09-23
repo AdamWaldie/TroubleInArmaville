@@ -1072,7 +1072,7 @@ shortcuts[] =
 	156
 };
 default = 1;
-text = "OK";
+text = "$STR_DISP_OK";
 };
 class RscButtonMenuCancel
 {
@@ -1081,7 +1081,7 @@ shortcuts[] =
 {
 	"0x00050000 + 1"
 };
-text = "Cancel";
+text = "$STR_DISP_CANCEL";
 };
 class RscControlsGroup
 {

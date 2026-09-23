@@ -94,6 +94,25 @@ Never edit `WaldoDebug`'s `.hpp` or hand-add a case to `fn_debugMenu.sqf`. Regis
 
 See [Dev and Test Mode](Dev-Test-Mode) for the `"local"` and `"server"` execution contract.
 
+## Player-facing text goes in the stringtable
+
+Never hardcode text a player will read. Add a `STR_TIA_<Area>_<Name>` key to `stringtable.xml` with `<Original>` and `<English>`, then reference it. Keep markup (`<t color=...>`) in code and out of the stringtable, and pass highlighted words as `%n` arguments.
+
+Localise on the machine that displays the text, not the one that sends it. A server calling `localize` would show every player the server's language:
+
+```sqf
+// Wrong: formatted and localised on the server
+[format [localize "STR_TIA_Karma_LowWarning", name _x, _k, _c]] remoteExec ["systemChat", 0];
+// Right: key + args, localised on each client
+[["STR_TIA_Karma_LowWarning", name _x, _k, _c]] remoteExec ["Waldo_fnc_chat", 0];
+```
+
+`Waldo_fnc_ShowUiNotification` and `Waldo_fnc_topBarAnnounce` accept keys and `[key, args...]` arrays directly. Use `Waldo_fnc_chat`, `Waldo_fnc_hintL` and `Waldo_fnc_addActionL` in place of remote-executed `systemChat`, `hint` and `addAction`. In config, write `text = "$STR_TIA_...";`.
+
+Keep ids English. Roles, shop item keys and ping kinds are compared in code, so localise only at the point of display. Write each sentence as one key rather than gluing fragments together, because word order differs between languages. Plurals get separate `...One`/`...Many` keys.
+
+`tools/ci/stringtable_checker.py` runs in CI. It fails on a referenced key that doesn't exist and on a translation that changes the `%n` placeholders.
+
 ## Comments explain why, not what
 
 The line `player setDamage 1;` needs no comment. Comment constraints, engine behaviour, previous bugs, and the reason an obvious alternative fails. When fixing a non-obvious defect, record the failure the new code prevents.

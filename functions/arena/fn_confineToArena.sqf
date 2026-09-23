@@ -27,7 +27,7 @@ private _gen = player getVariable "Waldo_confineGen";
 		if ((player distance _c) > (_r + 5)) then {
 			player setPos _p;
 			player setDir _d;
-			hintSilent "Do Not Attempt To Escape";
+			hintSilent localize "STR_TIA_Arena_NoEscape";
 			sleep 5;
 			if (missionNamespace getVariable ["gameOn", true]) then { hintSilent ""; };
 		};

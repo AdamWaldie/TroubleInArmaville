@@ -69,7 +69,7 @@ while { missionNamespace getVariable ["gameOn", false] } do {
 		// rendered height doesn't meaningfully change between ticks, only its
 		// width (traitors see a longer string) - and ST_CENTER already
 		// handles horizontal centring on its own.
-		_timerCtrl ctrlSetText "Round  0:00";
+		_timerCtrl ctrlSetText format [localize "STR_TIA_Timer_Round", "0:00"];
 		private _textH = ctrlTextHeight _timerCtrl;
 		_timerCtrl ctrlSetPosition [_timerBoxX, _timerBoxY + ((_timerBoxH - _textH) / 2), _timerBoxW, _textH];
 		_timerCtrl ctrlCommit 0;
@@ -89,10 +89,10 @@ while { missionNamespace getVariable ["gameOn", false] } do {
 	// Traitors are shown it, since only they get the full extended-by-deaths
 	// picture, but the label needs to describe what the number IS, not who
 	// sees it.
-	private _text = "Round  " + (if (_civRemaining <= 0) then { "OVERTIME" } else { [_civRemaining] call _fmt });
+	private _text = format [localize "STR_TIA_Timer_Round", if (_civRemaining <= 0) then { localize "STR_TIA_Timer_Overtime" } else { [_civRemaining] call _fmt }];
 	if ((player getVariable ["role", ""]) == "Traitor") then {
 		private _traitorRemaining = _timelimit - _elapsed;
-		_text = _text + format ["     Overtime Deadline  %1", [_traitorRemaining] call _fmt];
+		_text = _text + "     " + format [localize "STR_TIA_Timer_OvertimeDeadline", [_traitorRemaining] call _fmt];
 	};
 	_timerCtrl ctrlSetText _text;
 

@@ -50,29 +50,29 @@ if (isNull _target) then {
 
 private _warn = {
 	params ["_msg"];
-	["DNA SCANNER", _msg, "WARNING", 3, "BOTTOM_LEFT", "DNA_SAMPLE", "DNA SCANNER"] call Waldo_fnc_ShowUiNotification;
+	["STR_TIA_DNA_Title", _msg, "WARNING", 3, "BOTTOM_LEFT", "DNA_SAMPLE", "STR_TIA_DNA_Title"] call Waldo_fnc_ShowUiNotification;
 };
 
-if (isNull _target) exitWith { ["Aim at a body or a piece of evidence."] call _warn; false };
-if ((player distance _target) > 4) exitWith { ["Move closer to the evidence."] call _warn; false };
+if (isNull _target) exitWith { ["STR_TIA_DNA_AimAtEvidence"] call _warn; false };
+if ((player distance _target) > 4) exitWith { ["STR_TIA_DNA_MoveCloser"] call _warn; false };
 // A living person cannot be sampled - only bodies and tagged objects carry DNA.
-if (_target isKindOf "CAManBase" && {alive _target}) exitWith { ["Aim at a body, not a living person."] call _warn; false };
+if (_target isKindOf "CAManBase" && {alive _target}) exitWith { ["STR_TIA_DNA_NotLiving"] call _warn; false };
 
 private _source = _target getVariable ["Waldo_killerDNA", objNull];
-if (isNull _source) exitWith { ["No usable DNA here."] call _warn; false };
+if (isNull _source) exitWith { ["STR_TIA_DNA_NoDNA"] call _warn; false };
 
 // One sample per piece of evidence, full stop - global (not per-detective),
 // so re-aiming at the same corpse can't be used to re-roll contamination/
 // misdirection for a better outcome, and two different detectives can't
 // each burn a charge on the same body for two independent rolls either.
-if (_target getVariable ["Waldo_dnaSampled", false]) exitWith { ["Already sampled - no new information here."] call _warn; false };
+if (_target getVariable ["Waldo_dnaSampled", false]) exitWith { ["STR_TIA_DNA_AlreadySampled"] call _warn; false };
 _target setVariable ["Waldo_dnaSampled", true, true];
 
 private _charges = (player getVariable ["Waldo_dnaScannerCharges", 3]) - 1;
 player setVariable ["Waldo_dnaScannerCharges", _charges, true];
 [
-	"DNA SCANNER", format ["Sampling DNA... (%1 use%2 left)", _charges, ["s", ""] select (_charges == 1)],
-	"INFO", 2, "BOTTOM_LEFT", "DNA_SAMPLE", "DNA SCANNER"
+	"STR_TIA_DNA_Title", [["STR_TIA_DNA_SamplingMany", "STR_TIA_DNA_SamplingOne"] select (_charges == 1), _charges],
+	"INFO", 2, "BOTTOM_LEFT", "DNA_SAMPLE", "STR_TIA_DNA_Title"
 ] call Waldo_fnc_ShowUiNotification;
 
 // Sampling a second (or third) piece of evidence before the first track
@@ -131,25 +131,25 @@ private _trackToken = player getVariable ["Waldo_dnaTrackToken", 0];
 	// witness-based case.
 	private _selfMatch = (_source == player);
 	if (_contam > 0 || _selfMatch) then {
-		private _tier = if (_selfMatch) then { "Severe" } else {
-			["Low", "Moderate", "High", "Severe"] select (
+		private _tier = localize (if (_selfMatch) then { "STR_TIA_DNA_TierSevere" } else {
+			["STR_TIA_DNA_TierLow", "STR_TIA_DNA_TierModerate", "STR_TIA_DNA_TierHigh", "STR_TIA_DNA_TierSevere"] select (
 				if (_misChance < 0.15) then {0} else { if (_misChance < 0.4) then {1} else { if (_misChance < 0.7) then {2} else {3} } }
 			)
-		};
+		});
 		private _tierColour = if (_selfMatch) then { "#FF6161" } else {
 			["#6CE5A8", "#FFD166", "#FF9F5A", "#FF6161"] select (
 				if (_misChance < 0.15) then {0} else { if (_misChance < 0.4) then {1} else { if (_misChance < 0.7) then {2} else {3} } }
 			)
 		};
+		private _tierTxt = format ["<t color='%1'>%2</t>", _tierColour, format [localize "STR_TIA_DNA_Contamination", _tier]];
 		private _msg = if (_selfMatch) then {
-			format ["<t color='%1'>%2 contamination</t> - this trail leads straight back to you. The DNA may be spoofed rather than a real witness at the scene.", _tierColour, _tier]
+			format [localize "STR_TIA_DNA_SelfMatch", _tierTxt]
 		} else {
-			format ["<t color='%1'>%2 contamination</t> (%3 nearby witness%4) - reading may be unreliable.",
-				_tierColour, _tier, _contam, ["es", ""] select (_contam == 1)]
+			format [localize (["STR_TIA_DNA_WitnessMany", "STR_TIA_DNA_WitnessOne"] select (_contam == 1)), _tierTxt, _contam]
 		};
 		[
-			"DNA SCANNER", _msg,
-			"WARNING", 4, "BOTTOM_LEFT", "DNA_CONTAM", "DNA SCANNER"
+			"STR_TIA_DNA_Title", _msg,
+			"WARNING", 4, "BOTTOM_LEFT", "DNA_CONTAM", "STR_TIA_DNA_Title"
 		] call Waldo_fnc_ShowUiNotification;
 		sleep 1.5;
 	};
@@ -170,7 +170,7 @@ private _trackToken = player getVariable ["Waldo_dnaTrackToken", 0];
 			private _wTxt = if (_dw != "" && {isClass (configFile >> "CfgWeapons" >> _dw)}) then {
 				" - " + (getText (configFile >> "CfgWeapons" >> _dw >> "displayName"))
 			} else { "" };
-			_forensics = format ["<br/><t size='0.8' color='#9FB3C8'>Died %1s ago%2</t>", round (time - _dt), _wTxt];
+			_forensics = format ["<br/><t size='0.8' color='#9FB3C8'>%1</t>", format [localize "STR_TIA_DNA_DiedAgo", round (time - _dt), _wTxt]];
 		};
 	};
 
@@ -218,7 +218,7 @@ private _trackToken = player getVariable ["Waldo_dnaTrackToken", 0];
 		player setVariable ["Waldo_dnaMarkerEH", _markerEH];
 	};
 
-	private _dirs = ["N", "NE", "E", "SE", "S", "SW", "W", "NW"];
+	private _dirs = ["N", "NE", "E", "SE", "S", "SW", "W", "NW"] apply { localize ("STR_TIA_Dir_" + _x) };
 	// This is its own notification channel/display now, not hintSilent, so it
 	// no longer needs the gameOn race-guard the old hintSilent version did
 	// (that was specifically to stop clobbering Waldo_fnc_mvpCelebrate's
@@ -234,9 +234,9 @@ private _trackToken = player getVariable ["Waldo_dnaTrackToken", 0];
 		private _d = round (player distance _tracked);
 		private _c = _dirs select (floor ((((player getDir _tracked) + 22.5) % 360) / 45));
 		[
-			"DNA SUSPECT",
-			format ["~%1 m  %2<br/><t size='0.8' color='#9FB3C8'>tracking %3s</t>%4", _d, _c, round (_endAt - time), _forensics],
-			"INFO", 0, "BOTTOM_LEFT", "DNA_TRACK", "DNA SCANNER"
+			"STR_TIA_DNA_Suspect",
+			format ["~%1 m  %2<br/><t size='0.8' color='#9FB3C8'>%3</t>%4", _d, _c, format [localize "STR_TIA_DNA_Tracking", round (_endAt - time)], _forensics],
+			"INFO", 0, "BOTTOM_LEFT", "DNA_TRACK", "STR_TIA_DNA_Title"
 		] call Waldo_fnc_ShowUiNotification;
 		sleep 1;
 	};
@@ -245,7 +245,7 @@ private _trackToken = player getVariable ["Waldo_dnaTrackToken", 0];
 	// out either, neither a "suspect is down" card nor a dismiss.
 	if ((player getVariable ["Waldo_dnaTrackToken", 0]) == _trackToken) then {
 		if (!isNull _tracked && {!alive _tracked} && {missionNamespace getVariable ["gameOn", true]}) then {
-			["DNA SUSPECT", "Suspect is down.", "SUCCESS", 4, "BOTTOM_LEFT", "DNA_TRACK", "DNA SCANNER"] call Waldo_fnc_ShowUiNotification;
+			["STR_TIA_DNA_Suspect", "STR_TIA_DNA_SuspectDown", "SUCCESS", 4, "BOTTOM_LEFT", "DNA_TRACK", "STR_TIA_DNA_Title"] call Waldo_fnc_ShowUiNotification;
 		} else {
 			["DNA_TRACK"] call Waldo_fnc_DismissUiNotification;
 		};

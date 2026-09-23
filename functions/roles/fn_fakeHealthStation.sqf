@@ -60,7 +60,7 @@ clearBackpackCargoGlobal _station;
 // sets it off. _target is only read here for the boom's kill-attribution
 // hand-off, not to gate whether it fires.
 [_station, [
-	"<t color='#3FE07A' size='1.4'>HEALTH STATION</t>",
+	["<t color='#3FE07A' size='1.4'>%1</t>", "STR_TIA_Health_Title"],
 	{
 		params ["_target"];
 		[_target] remoteExec ["Waldo_fnc_fakeHealthStationBoom", 2];
@@ -68,7 +68,7 @@ clearBackpackCargoGlobal _station;
 	nil, 1.5, false, false, "",
 	"alive _this",
 	4
-]] remoteExec ["addAction", 0, _station];
+]] remoteExec ["Waldo_fnc_addActionL", 0, _station];   // title localised per client
 
 // Same diagnostic as Waldo_fnc_healthStation - "no interactions" reported
 // with no bug found on static review; logging so the next .rpt confirms

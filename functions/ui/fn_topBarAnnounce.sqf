@@ -7,7 +7,8 @@
 // without stealing the hint/hintSilent channel other systems already rely on.
 //
 // params: [_text, _color, _hold]
-//   _text  - plain string (no markup - this is ctrlSetText, not structured text,
+//   _text  - plain string, STR_TIA_ key or [fmtKey, args...] - resolved with
+//            Waldo_fnc_localize on this client (no markup - this is ctrlSetText, not structured text,
 //            same "keep colour and precise layout apart" reasoning as the
 //            keybind row in fn_initHud.sqf)
 //   _color - [r,g,b], alpha is driven by the fade itself
@@ -20,7 +21,7 @@
 // announcement's timer can't cut a newer one short).
 //////////////////////////////////////////////////////////////////
 
-params [["_text", "", [""]], ["_color", [1, 0.82, 0.25], [[]]], ["_hold", 4, [0]]];
+params [["_text", "", ["", []]], ["_color", [1, 0.82, 0.25], [[]]], ["_hold", 4, [0]]];
 
 if (!hasInterface) exitWith {};
 
@@ -32,7 +33,7 @@ private _bgCtrl = _display displayCtrl 3620;
 private _textCtrl = _display displayCtrl 3621;
 if (isNull _shadowCtrl || {isNull _bgCtrl} || {isNull _textCtrl}) exitWith {};
 
-_textCtrl ctrlSetText _text;
+_textCtrl ctrlSetText ([_text] call Waldo_fnc_localize);
 
 private _token = (_display getVariable ["Waldo_announceToken", 0]) + 1;
 _display setVariable ["Waldo_announceToken", _token];

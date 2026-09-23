@@ -37,52 +37,48 @@ params ["_role", ["_teammateNames", []], ["_detectiveName", ""], ["_jesterExists
 
 private _tag = { params ["_r", "_txt"]; format ["<t color='%1'>%2</t>", [_r] call Waldo_roleColorHex, _txt] };
 
-private _headline = "";
 private _intent = "";
 switch (_role) do {
 	case "Traitor": {
-		_headline = "TRAITOR";
-		_intent = "Kill everyone who isn't one of you, before they work out who you are.";
+		_intent = localize "STR_TIA_Brief_IntentTraitor";
 	};
 	case "Detective": {
-		_headline = "DETECTIVE";
-		_intent = "Investigate the dead, find the Traitors, and survive long enough to do it.";
+		_intent = localize "STR_TIA_Brief_IntentDetective";
 	};
 	case "Jester": {
-		_headline = "JESTER";
-		_intent = "You can't fight back. Get an Innocent or the Detective to kill you and YOU win instead.";
+		_intent = localize "STR_TIA_Brief_IntentJester";
 	};
 	default {
-		_headline = "INNOCENT";
-		_intent = "Survive, and help work out who the Traitors are before they work out you.";
+		_intent = localize "STR_TIA_Brief_IntentInnocent";
 	};
 };
+private _headline = toUpper localize ("STR_TIA_Role_" + (["Innocent", _role] select (_role in ["Traitor", "Detective", "Jester"])));
 
-private _lines = [format ["You are the %1. %2", [_role, _headline] call _tag, _intent]];
+private _lines = [format [localize "STR_TIA_Brief_YouAre", [_role, _headline] call _tag, _intent]];
 
 if (_role == "Traitor") then {
 	private _matesTxt = if (count _teammateNames > 0) then {
 		(_teammateNames apply { ["Traitor", _x] call _tag }) joinString ", "
-	} else { "no one - you're on your own this round" };
-	_lines pushBack format ["Fellow Traitors: %1", _matesTxt];
+	} else { localize "STR_TIA_Brief_NoMates" };
+	_lines pushBack format [localize "STR_TIA_Brief_FellowTraitors", _matesTxt];
 	if (_jesterExists && {_jesterName != ""}) then {
 		_lines pushBack format [
-			"The Jester is %1 - killing them wins your team NOTHING and costs you credits. Leave them be.",
+			localize "STR_TIA_Brief_JesterIsTraitorView",
 			["Jester", _jesterName] call _tag
 		];
 	};
 } else {
 	if (_jesterExists) then {
 		_lines pushBack format [
-			"There is a %1 this round. Don't get tricked into killing them - that's exactly what they want.",
-			["Jester", "Jester"] call _tag
+			localize "STR_TIA_Brief_JesterExists",
+			["Jester", localize "STR_TIA_Role_Jester"] call _tag
 		];
 	};
 };
 
 if (_detectiveName != "" && {_role != "Detective"}) then {
 	_lines pushBack format [
-		"The Detective is %1 - they can test/scan for Traitors. Worth staying on their good side.",
+		localize "STR_TIA_Brief_DetectiveIs",
 		["Detective", _detectiveName] call _tag
 	];
 };

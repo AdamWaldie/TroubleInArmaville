@@ -126,13 +126,13 @@ if (!isNull _culprit && {_culprit != _unit}) then {
 		if (count _frames > 0) then {
 			_dnaOn = selectRandom _frames;
 			[
-				"FALSE FLAG TRIGGERED", format ["%1's DNA was left at the scene instead of yours.", name _dnaOn],
-				"SUCCESS", 8, "TOP_RIGHT", "FALSEFLAG", "TRAITOR"
+				"STR_TIA_FalseFlag_Triggered", ["STR_TIA_FalseFlag_TriggeredBody", name _dnaOn],
+				"SUCCESS", 8, "TOP_RIGHT", "FALSEFLAG", "STR_TIA_Role_Traitor"
 			] remoteExec ["Waldo_fnc_ShowUiNotification", _culprit];
 		} else {
 			[
-				"FALSE FLAG FAILED", "No one else was around to frame - your own DNA was left at the scene.",
-				"WARNING", 8, "TOP_RIGHT", "FALSEFLAG", "TRAITOR"
+				"STR_TIA_FalseFlag_Failed", "STR_TIA_FalseFlag_FailedBody",
+				"WARNING", 8, "TOP_RIGHT", "FALSEFLAG", "STR_TIA_Role_Traitor"
 			] remoteExec ["Waldo_fnc_ShowUiNotification", _culprit];
 		};
 		_culprit setVariable ["Waldo_falseFlag", false, true];
@@ -163,7 +163,7 @@ if (!isNull _culprit && {_culprit != _unit}) then {
 // disappears once a Detective has identified it. Added on every machine
 // (JIP-safe).
 [_unit, [
-	"<t color='#ffd23f'>Identify Body</t>",
+	["<t color='#ffd23f'>%1</t>", "STR_TIA_Action_IdentifyBody"],
 	// _target/_caller are only auto-bound magic variables inside the
 	// CONDITION string (below) - the STATEMENT here only ever gets them
 	// through _this ([_target, _caller, _actionId, _arguments], per BI's own
@@ -182,7 +182,7 @@ if (!isNull _culprit && {_culprit != _unit}) then {
 	nil, 4, true, false, "",
 	"!(_target getVariable ['Waldo_roleRevealed', false])",
 	2.5
-]] remoteExec ["addAction", 0, _unit];
+]] remoteExec ["Waldo_fnc_addActionL", 0, _unit];   // title localised per client
 
 private _guilty = true;   // did the culprit kill someone they shouldn't have?
 
@@ -235,8 +235,8 @@ if (_victimRole == "Innocent" && {_culpritRole == "Traitor"}) then {
 		if ((_tally % _every) == 0 && {_reward > 0}) then {
 			{ _x setVariable ["points", (_x getVariable ["points", 0]) + _reward, true]; } forEach _traitors;
 			[
-				"CIVILIAN BONUS", format ["The Traitors have killed %1 civilians - every Traitor gains %2 credits.", _tally, _reward],
-				"SUCCESS", 8, "TOP_RIGHT", "CIVBONUS", "TRAITOR"
+				"STR_TIA_CivBonus_Title", ["STR_TIA_CivBonus_Body", _tally, _reward],
+				"SUCCESS", 8, "TOP_RIGHT", "CIVBONUS", "STR_TIA_Role_Traitor"
 			] remoteExec ["Waldo_fnc_ShowUiNotification", _traitors];
 		};
 	};
@@ -271,12 +271,9 @@ if (_victimRole == "Jester" && {_culpritRole == "Traitor"} && {!isNull _culprit}
 	_culprit setVariable ["points", _after, true];
 	private _lost = _before - _after;
 	[
-		"YOU KILLED THE JESTER",
-		format [
-			"The Jester doesn't count - that kill did NOTHING for your team's win condition. It cost you %1 credit%2, leaving you with %3. Check who you're shooting.",
-			_lost, ["", "s"] select (_lost != 1), _after
-		],
-		"WARNING", 8, "TOP_RIGHT", "JESTERPENALTY", "TRAITOR"
+		"STR_TIA_JesterKill_Title",
+		[["STR_TIA_JesterKill_BodyMany", "STR_TIA_JesterKill_BodyOne"] select (_lost == 1), _lost, _after],
+		"WARNING", 8, "TOP_RIGHT", "JESTERPENALTY", "STR_TIA_Role_Traitor"
 	] remoteExec ["Waldo_fnc_ShowUiNotification", _culprit];
 };
 
@@ -296,12 +293,9 @@ if (_victimRole == "Traitor" && {_culpritRole == "Traitor"} && {!isNull _culprit
 	};
 	private _lost = _before - _after;
 	[
-		"YOU TEAMKILLED",
-		format [
-			"That was %1 - a fellow Traitor, not a target. I hope you knew what you were doing when you killed them... %2 credit%3 gone, down to %4.",
-			name _unit, _lost, ["", "s"] select (_lost != 1), _after
-		],
-		"WARNING", 8, "TOP_RIGHT", "TRAITORTK", "TRAITOR"
+		"STR_TIA_TeamKill_Title",
+		[["STR_TIA_TeamKill_BodyMany", "STR_TIA_TeamKill_BodyOne"] select (_lost == 1), name _unit, _lost, _after],
+		"WARNING", 8, "TOP_RIGHT", "TRAITORTK", "STR_TIA_Role_Traitor"
 	] remoteExec ["Waldo_fnc_ShowUiNotification", _culprit];
 	if (missionNamespace getVariable ["KarmaEnabled", true]) then {
 		[_culprit, -10, "teamkilled a fellow Traitor"] call _adjustKarma;

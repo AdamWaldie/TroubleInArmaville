@@ -12,16 +12,16 @@
 private _target = cursorTarget;
 
 if (isNull _target || {!(_target isKindOf "CAManBase")} || {alive _target}) exitWith {
-	["REMOVE BODY", "Aim at a body.", "WARNING", 3, "BOTTOM_LEFT", "REMOVEBODY", "REMOVE BODY"] call Waldo_fnc_ShowUiNotification;
+	["STR_TIA_RemoveBody_Title", "STR_TIA_RemoveBody_AimAtBody", "WARNING", 3, "BOTTOM_LEFT", "REMOVEBODY", "STR_TIA_RemoveBody_Title"] call Waldo_fnc_ShowUiNotification;
 	false
 };
 
 if ((player distance _target) > 4) exitWith {
-	["REMOVE BODY", "Move closer to the body.", "WARNING", 3, "BOTTOM_LEFT", "REMOVEBODY", "REMOVE BODY"] call Waldo_fnc_ShowUiNotification;
+	["STR_TIA_RemoveBody_Title", "STR_TIA_RemoveBody_MoveCloser", "WARNING", 3, "BOTTOM_LEFT", "REMOVEBODY", "STR_TIA_RemoveBody_Title"] call Waldo_fnc_ShowUiNotification;
 	false
 };
 
-["REMOVE BODY", "Disposing of the body...", "INFO", 2, "BOTTOM_LEFT", "REMOVEBODY", "REMOVE BODY"] call Waldo_fnc_ShowUiNotification;
+["STR_TIA_RemoveBody_Title", "STR_TIA_RemoveBody_Disposing", "INFO", 2, "BOTTOM_LEFT", "REMOVEBODY", "STR_TIA_RemoveBody_Title"] call Waldo_fnc_ShowUiNotification;
 
 // Y is handled unscheduled (called directly from the KeyDown handler), so the
 // delay has to live in its own scheduled thread - sleep is illegal here otherwise.
@@ -34,7 +34,7 @@ if ((player distance _target) > 4) exitWith {
 	};
 
 	[_target] remoteExec ["Waldo_fnc_deleteBody", 2];
-	["REMOVE BODY", "Body removed.", "SUCCESS", 3, "BOTTOM_LEFT", "REMOVEBODY", "REMOVE BODY"] call Waldo_fnc_ShowUiNotification;
+	["STR_TIA_RemoveBody_Title", "STR_TIA_RemoveBody_Done", "SUCCESS", 3, "BOTTOM_LEFT", "REMOVEBODY", "STR_TIA_RemoveBody_Title"] call Waldo_fnc_ShowUiNotification;
 };
 
 true

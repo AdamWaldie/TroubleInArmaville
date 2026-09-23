@@ -39,10 +39,11 @@ private _center = missionNamespace getVariable ["mapPos", getPosATL player];
 // doesn't touch hintSilent (the whole reason that channel used to race
 // fn_dnaScanner.sqf's tracking readout, see the fn_initHud.sqf/
 // fn_dnaScanner.sqf history) at all anymore.
-private _title = if (_name != "") then { "ROUND MVP" } else { "ROUND COMPLETE" };
+private _title = if (_name != "") then { "STR_TIA_MVP_Title" } else { "STR_TIA_MVP_Complete" };
 private _msg = if (_name != "") then {
-	format ["%1 (%2) - %3 kill%4 this round.", _name, _role, _kills, (["", "s"] select (_kills != 1))]
+	// _role arrives as the role id from the server - localised here.
+	[["STR_TIA_MVP_BodyMany", "STR_TIA_MVP_BodyOne"] select (_kills == 1), _name, "STR_TIA_Role_" + _role, _kills]
 } else {
-	"No one scored a kill this round."
+	"STR_TIA_MVP_NoKills"
 };
-[_title, _msg, "SUCCESS", 8, "TOP", "MVP", "ROUND"] call Waldo_fnc_ShowUiNotification;
+[_title, _msg, "SUCCESS", 8, "TOP", "MVP", "STR_TIA_Source_Round"] call Waldo_fnc_ShowUiNotification;

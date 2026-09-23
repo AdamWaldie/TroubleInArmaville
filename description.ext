@@ -1,13 +1,13 @@
 // === MISSION OVERVIEW
 
-overviewText 	= "Trouble in ArmaVille";	// mission summary
+overviewText 	= "$STR_TIA_MissionName";	// mission summary
 overviewPicture = "ui\TroubleInArmaville.jpg";
 
 // === LOAD SCREEN
 
 loadScreen = "ui\TroubleInArmaville.jpg";
 author = "WaldoTheWarfighter"; // Author
-onLoadName = "Trouble in ArmaVille"; // Mission name
+onLoadName = "$STR_TIA_MissionName"; // Mission name
 // Stamped with the real release version by .github/workflows/release.yml at
 // package time (from the git tag) - this committed value only ever shows
 // when running straight from the repo, outside of a packaged release.
@@ -52,8 +52,8 @@ class CfgDebriefing
 {  
 	class End1
 	{
-		title = "Innocents Win";
-		subtitle = "All Traitors Eliminated";
+		title = "$STR_TIA_End_InnocentsWin";
+		subtitle = "$STR_TIA_End_AllTraitorsEliminated";
 		description = "";
 		pictureBackground = "";
 		picture = "KIA";
@@ -61,8 +61,8 @@ class CfgDebriefing
 	};
 	class End2
 	{
-		title = "Traitors Win";
-		subtitle = "All Innocents Eliminated";
+		title = "$STR_TIA_End_TraitorsWin";
+		subtitle = "$STR_TIA_End_AllInnocentsEliminated";
 		description = "";
 		pictureBackground = "";
 		picture = "KIA";
@@ -70,8 +70,8 @@ class CfgDebriefing
 	};
 	class End3
 	{
-		title = "Innocents Win";
-		subtitle = "One Or More Innocents Survived";
+		title = "$STR_TIA_End_InnocentsWin";
+		subtitle = "$STR_TIA_End_InnocentsSurvived";
 		description = "";
 		pictureBackground = "";
 		picture = "KIA";
@@ -79,8 +79,8 @@ class CfgDebriefing
 	};
 	class End4
 	{
-		title = "Jesters Win";
-		subtitle = "A Jester Was killed";
+		title = "$STR_TIA_End_JestersWin";
+		subtitle = "$STR_TIA_End_JesterKilled";
 		description = "";
 		pictureBackground = "";
 		picture = "KIA";
@@ -109,6 +109,15 @@ class CfgFunctions
 {
 	class Waldo
 	{
+		class lang
+		{
+			file = "functions\lang";
+			class localize {};          // Waldo_fnc_localize (shared: resolves STR_TIA_ keys / [fmt, args] in the local client's language)
+			class chat {};              // Waldo_fnc_chat (client: localised systemChat, remoteExec target for server-built lines)
+			class hintL {};             // Waldo_fnc_hintL (client: localised hint/hintSilent, remoteExec target for server-built hints)
+			class addActionL {};        // Waldo_fnc_addActionL (client: addAction with a per-client localised title, remoteExec target in place of "addAction")
+		};
+
 		class config
 		{
 			file = "functions\config";
@@ -286,31 +295,31 @@ class Params {
 
 	// === ROUND ===
 	class roundBaseLength {                 // 0
-		title = "Base Round Length (seconds)";
+		title = "$STR_TIA_Param_roundBaseLength";
 		values[] = {120, 150, 180, 210, 240};
 		texts[]  = {"120", "150", "180", "210", "240"};
 		default  = 180;
 	};
 	class roundPlayerLength {               // 1
-		title = "Bonus Time Per Player (seconds)";
+		title = "$STR_TIA_Param_roundPlayerLength";
 		values[] = {15, 30, 45};
 		texts[]  = {"15", "30", "45"};
 		default  = 30;
 	};
 	class roundTraitorLength {              // 2
-		title = "Traitor Bonus Time (seconds)";
+		title = "$STR_TIA_Param_roundTraitorLength";
 		values[] = {30, 45, 60};
 		texts[]  = {"30", "45", "60"};
 		default  = 45;
 	};
 	class roundDeadLength {                 // 3
-		title = "Time Added Per Dead Player (seconds)";
+		title = "$STR_TIA_Param_roundDeadLength";
 		values[] = {15, 30, 45};
 		texts[]  = {"15", "30", "45"};
 		default  = 30;
 	};
 	class roundWarmupLength {               // 4
-		title = "Warmup Length (seconds)";
+		title = "$STR_TIA_Param_roundWarmupLength";
 		values[] = {10, 20, 30, 45};
 		texts[]  = {"10", "20", "30", "45"};
 		default  = 20;
@@ -322,63 +331,63 @@ class Params {
 		// didn't say these two work TOGETHER as a range assignRoles rolls a
 		// random percentage from, which read as two unrelated settings
 		// rather than a min/max pair.
-		title = "Traitor Ratio: Minimum %";
+		title = "$STR_TIA_Param_TraitorPercentageChanceLowerBound";
 		values[] = {20, 25, 30, 40};
 		texts[]  = {"20%", "25%", "30%", "40%"};
 		default  = 25;
 	};
 	class TraitorPercentageChanceHigherBound {  // 6
-		title = "Traitor Ratio: Maximum %";
+		title = "$STR_TIA_Param_TraitorPercentageChanceHigherBound";
 		values[] = {40, 45, 50, 60};
 		texts[]  = {"40%", "45%", "50%", "60%"};
 		default  = 45;
 	};
 	class minTraitors {                     // 7
-		title = "Minimum Traitors";
+		title = "$STR_TIA_Param_minTraitors";
 		values[] = {1, 2, 3};
 		texts[]  = {"1", "2", "3"};
 		default  = 1;
 	};
 	class maxTraitors {                     // 8
-		title = "Maximum Traitors";
+		title = "$STR_TIA_Param_maxTraitors";
 		values[] = {0, 2, 3, 4, 5, 8};
-		texts[]  = {"Unlimited", "2", "3", "4", "5", "8"};
+		texts[]  = {"$STR_TIA_Param_Unlimited", "2", "3", "4", "5", "8"};
 		default  = 0;
 	};
 	class DetectiveEnabled {                // 9
-		title = "Enable Detective Role";
+		title = "$STR_TIA_Param_DetectiveEnabled";
 		values[] = {0, 1};
-		texts[]  = {"Disabled", "Enabled"};
+		texts[]  = {"$STR_TIA_Param_Disabled", "$STR_TIA_Param_Enabled"};
 		default  = 1;
 	};
 	class DetectiveMinPlayers {             // 10
-		title = "Detective: Minimum Players";
+		title = "$STR_TIA_Param_DetectiveMinPlayers";
 		values[] = {3, 4, 5, 6, 8};
 		texts[]  = {"3", "4", "5", "6", "8"};
 		default  = 5;
 	};
 	class JesterEnabled {                   // 11
-		title = "Enable Jester Role";
+		title = "$STR_TIA_Param_JesterEnabled";
 		values[] = {0, 1};
-		texts[]  = {"Disabled", "Enabled"};
+		texts[]  = {"$STR_TIA_Param_Disabled", "$STR_TIA_Param_Enabled"};
 		default  = 1;   // one of the four documented roles - on by default, not opt-in
 	};
 	class JesterMinPlayers {                // 12
 		// Moved up next to the rest of the Jester settings - was stranded at
 		// the very end of the list (appended after this param existed).
-		title = "Jester: Minimum Players";
+		title = "$STR_TIA_Param_JesterMinPlayers";
 		values[] = {5, 6, 8, 10, 12};
 		texts[]  = {"5", "6", "8", "10", "12"};
 		default  = 10;
 	};
 	class JesterAlways {                    // 13
-		title = "Jester: Always Appears";
+		title = "$STR_TIA_Param_JesterAlways";
 		values[] = {0, 1};
-		texts[]  = {"No (use chance)", "Yes"};
+		texts[]  = {"$STR_TIA_Param_JesterAlways_0", "$STR_TIA_Param_Yes"};
 		default  = 0;
 	};
 	class JesterPercentagechance {          // 14
-		title = "Chance of Jester Appearing";
+		title = "$STR_TIA_Param_JesterPercentagechance";
 		values[] = {20, 30, 40};
 		texts[]  = {"20%", "30%", "40%"};
 		default  = 30;
@@ -386,7 +395,7 @@ class Params {
 	class spectatorsSeeAllRoles {           // 15
 		// Grouped with Roles, not Gameplay - this is entirely about role
 		// visibility, same family as everything else in this section.
-		title = "Spectators See All Roles";
+		title = "$STR_TIA_Param_spectatorsSeeAllRoles";
 		values[] = {0, 1};
 		// Off by default: a dead player broadcasting every living role to
 		// anyone they still talk to (or just narrating what they see) leaks
@@ -394,19 +403,19 @@ class Params {
 		// falls through to each spectator's own per-role visibility (own
 		// team, the public Detective) rather than hiding everything - see
 		// Waldo_fnc_drawRoleIcons/Waldo_fnc_scoreboard.
-		texts[]  = {"No (own role's visibility only)", "Yes (see everyone)"};
+		texts[]  = {"$STR_TIA_Param_spectatorsSeeAllRoles_0", "$STR_TIA_Param_spectatorsSeeAllRoles_1"};
 		default  = 0;
 	};
 
 	// === GAMEPLAY / ECONOMY ===
 	class KarmaEnabled {                    // 16
-		title = "Enable Karma System";
+		title = "$STR_TIA_Param_KarmaEnabled";
 		values[] = {0, 1};
-		texts[]  = {"Disabled", "Enabled"};
+		texts[]  = {"$STR_TIA_Param_Disabled", "$STR_TIA_Param_Enabled"};
 		default  = 1;
 	};
 	class startingCredits {                 // 17
-		title = "Starting Shop Credits (base)";
+		title = "$STR_TIA_Param_startingCredits";
 		values[] = {0, 1, 2, 3, 5};
 		texts[]  = {"0", "1", "2", "3", "5"};
 		default  = 1;
@@ -414,107 +423,107 @@ class Params {
 	class startCreditsPerNPlayers {         // 18
 		// Moved up next to the base credits setting it scales - was
 		// stranded at the very end of the list.
-		title = "Additional Starting Credit per N Players";
+		title = "$STR_TIA_Param_startCreditsPerNPlayers";
 		values[] = {4, 5, 6, 8, 10, 12};
 		texts[]  = {"4", "5", "6", "8", "10", "12"};
 		default  = 8;
 	};
 	class killRewardCredits {               // 19
-		title = "Kill Reward Credits";
+		title = "$STR_TIA_Param_killRewardCredits";
 		values[] = {0, 1, 2, 3};
-		texts[]  = {"0 (off)", "1", "2", "3"};
+		texts[]  = {"$STR_TIA_Param_ZeroOff", "1", "2", "3"};
 		default  = 1;
 	};
 	class civKillBonusEvery {               // 20
-		title = "Traitor Bonus: 1 Credit per N Civilians Killed";
+		title = "$STR_TIA_Param_civKillBonusEvery";
 		values[] = {0, 3, 5, 8};
-		texts[]  = {"Off", "Every 3", "Every 5", "Every 8"};
+		texts[]  = {"$STR_TIA_Param_Off", "$STR_TIA_Param_civKillBonusEvery_1", "$STR_TIA_Param_civKillBonusEvery_2", "$STR_TIA_Param_civKillBonusEvery_3"};
 		default  = 5;
 	};
 
 	// === AIRDROP / LOOT ===
 	class airdrop {                         // 21
-		title = "Enable Airdrops";
+		title = "$STR_TIA_Param_airdrop";
 		values[] = {0, 1};
-		texts[]  = {"Disabled", "Enabled"};
+		texts[]  = {"$STR_TIA_Param_Disabled", "$STR_TIA_Param_Enabled"};
 		default  = 1;
 	};
 	class airdropBaseTimer {                // 22
-		title = "Airdrop Base Timer (seconds)";
+		title = "$STR_TIA_Param_airdropBaseTimer";
 		values[] = {30, 60, 75, 90, 120};
 		texts[]  = {"30", "60", "75", "90", "120"};
 		default  = 75;
 	};
 	class airdropRandomTimer {              // 23
-		title = "Airdrop Random Add Time (seconds)";
+		title = "$STR_TIA_Param_airdropRandomTimer";
 		values[] = {0, 30, 60, 75, 90};
 		texts[]  = {"0", "30", "60", "75", "90"};
 		default  = 75;
 	};
 	class airdropLoadoutsAmount {           // 24
-		title = "Loadouts Per Airdrop";
+		title = "$STR_TIA_Param_airdropLoadoutsAmount";
 		values[] = {1, 2, 3};
 		texts[]  = {"1", "2", "3"};
 		default  = 1;
 	};
 	class lootMaxBullets {                  // 25
-		title = "Max Ammo per Magazine";
+		title = "$STR_TIA_Param_lootMaxBullets";
 		values[] = {30, 40, 50, 60, 75, 100};
 		texts[]  = {"30", "40", "50", "60", "75", "100"};
 		default  = 50;
 	};
 	class lootPower {                       // 26
-		title = "Loot Power";
+		title = "$STR_TIA_Param_lootPower";
 		values[] = {0, 1, 2};
-		texts[]  = {"Low (SMGs / pistols)", "Balanced", "Anything (incl. rifles)"};
+		texts[]  = {"$STR_TIA_Param_lootPower_0", "$STR_TIA_Param_lootPower_1", "$STR_TIA_Param_lootPower_2"};
 		default  = 1;
 	};
 
 	// === ENVIRONMENT ===
 	class allowRain {                       // 27
-		title = "Enable Rain";
+		title = "$STR_TIA_Param_allowRain";
 		values[] = {0, 1};
-		texts[]  = {"No", "Yes"};
+		texts[]  = {"$STR_TIA_Param_No", "$STR_TIA_Param_Yes"};
 		default  = 1;
 	};
 	class chanceRain {                      // 28
-		title = "Chance of Rain (%)";
+		title = "$STR_TIA_Param_chanceRain";
 		values[] = {0, 20, 40, 60, 80, 100};
 		texts[]  = {"0%", "20%", "40%", "60%", "80%", "100%"};
 		default  = 40;
 	};
 	class allowFog {                        // 29
-		title = "Enable Fog";
+		title = "$STR_TIA_Param_allowFog";
 		values[] = {0, 1};
-		texts[]  = {"No", "Yes"};
+		texts[]  = {"$STR_TIA_Param_No", "$STR_TIA_Param_Yes"};
 		default  = 1;
 	};
 	class chanceFog {                       // 30
-		title = "Chance of Fog (%)";
+		title = "$STR_TIA_Param_chanceFog";
 		values[] = {0, 10, 20, 30, 40};
 		texts[]  = {"0%", "10%", "20%", "30%", "40%"};
 		default  = 20;
 	};
 	class timeOfDay {                       // 31
-		title = "Time of Day";
+		title = "$STR_TIA_Param_timeOfDay";
 		values[] = {0, 1, 2, 3, 4};
-		texts[]  = {"Random", "Dawn", "Day", "Dusk", "Night"};
+		texts[]  = {"$STR_TIA_Param_Random", "$STR_TIA_Param_timeOfDay_1", "$STR_TIA_Param_timeOfDay_2", "$STR_TIA_Param_timeOfDay_3", "$STR_TIA_Param_timeOfDay_4"};
 		default  = 2;   // Day - out of the box, every round is fought in daylight
 	};
 
 	// === ARENA ===
 	class arenaScale {                      // 32
-		title = "Arena Size";
+		title = "$STR_TIA_Param_arenaScale";
 		values[] = {75, 100, 150};
-		texts[]  = {"Small", "Normal", "Large"};
+		texts[]  = {"$STR_TIA_Param_arenaScale_0", "$STR_TIA_Param_arenaScale_1", "$STR_TIA_Param_arenaScale_2"};
 		default  = 100;
 	};
 
 	// === TESTING ===
 	class TestingFlag {                     // 33
-		title = "Enable Testing Mode";
+		title = "$STR_TIA_Param_TestingFlag";
 		values[] = {0, 1};
-		texts[]  = {"No", "Yes"};
+		texts[]  = {"$STR_TIA_Param_No", "$STR_TIA_Param_Yes"};
 		default  = 0;
 	};
 
@@ -528,9 +537,9 @@ class Params {
 		// they'd banked up, rather than subtracting a fixed amount a
 		// well-stocked Traitor could shrug off. Default 1 matches Radar's
 		// cost exactly, so the culprit can always still afford it afterward.
-		title = "Jester Kill Penalty (credits left after)";
+		title = "$STR_TIA_Param_jesterKillPenalty";
 		values[] = {0, 1, 2, 3};
-		texts[]  = {"0", "1 (Radar)", "2", "3"};
+		texts[]  = {"0", "$STR_TIA_Param_jesterKillPenalty_1", "2", "3"};
 		default  = 1;
 	};
 	class traitorTeamkillPenalty {          // 35
@@ -538,9 +547,9 @@ class Params {
 		// teammate is friendly fire between people who already know each
 		// other's role, not a mystery-breaking mistake. Still a real cost (see
 		// Waldo_fnc_onKilled) so it's never free, and a small karma hit too.
-		title = "Traitor Teamkill Penalty (credits)";
+		title = "$STR_TIA_Param_traitorTeamkillPenalty";
 		values[] = {0, 1, 2, 3};
-		texts[]  = {"0 (off)", "1", "2", "3"};
+		texts[]  = {"$STR_TIA_Param_ZeroOff", "1", "2", "3"};
 		default  = 2;
 	};
 
