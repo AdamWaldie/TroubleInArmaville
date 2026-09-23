@@ -232,7 +232,12 @@ if (_style > 0) then {
 		case "plank": { [0.227, 0.243, 0.165, 1] };
 		default       { [0.95, 0.93, 0.86, 1] };
 	});
-	_letter ctrlSetText toUpper (_role select [0, 1]);
+	// The initial comes from the stringtable (STR_TIA_Role_<role>_Letter) rather
+	// than the first character of the localised name: the letter boxes above
+	// were measured for a single Latin-width glyph, so translators pick a
+	// single glyph that fits (and the Jester nudge below still keys off the
+	// role, not the letter).
+	_letter ctrlSetText toUpper localize format ["STR_TIA_Role_%1_Letter", _role];
 	// Before ctrlTextHeight, always - that command reports the height of the text
 	// at whatever size is in effect, so measuring first centres against the wrong
 	// size.
@@ -259,7 +264,7 @@ if (_style > 0) then {
 // bar when there isn't, so the plate never reads as half-empty.
 if (_style == 0) then {
 	private _name = _display displayCtrl 1293;
-	_name ctrlSetText toUpper _role;
+	_name ctrlSetText toUpper localize ("STR_TIA_Role_" + _role);
 	private _nH = ctrlTextHeight _name;
 	private _nX = if (_hasCredits) then { 0.004 } else { 0 };
 	private _nW = if (_hasCredits) then { 0.080 } else { 0.150 };
@@ -301,21 +306,22 @@ if (_hasCredits) then {
 	// design intended that; it's the same measure-don't-guess fix the rest of
 	// this HUD already had, applied to the one control that never got it.
 	private _creditBox = switch (_style) do {
-		case 0: { [1295, 0.086, 0.152, 0.060, 0.026, "%1 CR"] };   // Field Medallion
-		case 1: { [1306, 0.020625, 0.12711, 0.11875, 0.02375, "%1 CR"] };   // struckCoin
-		case 2: { [1316, 0.023594, 0.12934, 0.11281, 0.019297, "%1 CR"] };   // enamelPin
-		case 3: { [1326, 0.019141, 0.10781, 0.12172, 0.017813, "%1 CR"] };   // dogTag
-		case 4: { [1336, 0.0325, 0.1093, 0.095, 0.017813, "%1 CR"] };   // unitPatch
-		case 5: { [1346, 0.019141, 0.11969, 0.12172, 0.017813, "%1 CR"] };   // crateStencil
-		case 6: { [1356, 0.0072656, 0.14344, 0.14547, 0.017813, "%1 CREDITS"] };   // caseFile
-		case 7: { [1366, 0.026562, 0.14641, 0.10687, 0.019297, "%1 CREDITS"] };   // chalkMark
-		case 8: { [1376, 0.045859, 0.14344, 0.080156, 0.019297, "%1 CR"] };   // evidenceTag
+		case 0: { [1295, 0.086, 0.152, 0.060, 0.026, "STR_TIA_Hud_CreditsShort"] };   // Field Medallion
+		case 1: { [1306, 0.020625, 0.12711, 0.11875, 0.02375, "STR_TIA_Hud_CreditsShort"] };   // struckCoin
+		case 2: { [1316, 0.023594, 0.12934, 0.11281, 0.019297, "STR_TIA_Hud_CreditsShort"] };   // enamelPin
+		case 3: { [1326, 0.019141, 0.10781, 0.12172, 0.017813, "STR_TIA_Hud_CreditsShort"] };   // dogTag
+		case 4: { [1336, 0.0325, 0.1093, 0.095, 0.017813, "STR_TIA_Hud_CreditsShort"] };   // unitPatch
+		case 5: { [1346, 0.019141, 0.11969, 0.12172, 0.017813, "STR_TIA_Hud_CreditsShort"] };   // crateStencil
+		case 6: { [1356, 0.0072656, 0.14344, 0.14547, 0.017813, "STR_TIA_Buy_Credits"] };   // caseFile
+		case 7: { [1366, 0.026562, 0.14641, 0.10687, 0.019297, "STR_TIA_Buy_Credits"] };   // chalkMark
+		case 8: { [1376, 0.045859, 0.14344, 0.080156, 0.019297, "STR_TIA_Hud_CreditsShort"] };   // evidenceTag
 		// 0 - Original. Keeps its own lowercase "%1 credits" wording rather than
 		// being normalised to the other styles' CR/CREDITS - the full-width pill has
 		// room for it, and it's part of what the style is.
-		default { [1002, 0, -0.040, 0.150, 0.030, "%1 credits"] };
+		default { [1002, 0, -0.040, 0.150, 0.030, "STR_TIA_Hud_CreditsLower"] };
 	};
 	_creditBox params ["_creditTextIdc", "_cX", "_cY", "_cW", "_cBoxH", "_cFormat"];
+	_cFormat = localize _cFormat;   // table holds stringtable keys
 	private _credits = _display displayCtrl _creditTextIdc;
 
 	// Token-guarded the same way the keybind-hint fade below is (and for the
@@ -376,7 +382,7 @@ private _line1 = "";
 private _line2 = "";
 {
 	_x params ["_key", "_label"];
-	private _entry = format ["%1: %2     ", _key, _label];
+	private _entry = format [localize "STR_TIA_Hud_KeyHint", _key, _label] + "     ";
 	if (_forEachIndex < _half) then { _line1 = _line1 + _entry; } else { _line2 = _line2 + _entry; };
 } forEach _hintsList;
 

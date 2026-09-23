@@ -14,7 +14,7 @@ private _aceAvailable =
 if (_aceAvailable) then {
     private _root = [
         "Waldo_UI_SelfRoot",
-        "WMP Interface",
+        localize "STR_TIA_UiCleanup_Root",
         "",
         {},
         {true}
@@ -23,7 +23,7 @@ if (_aceAvailable) then {
 
     private _clear = [
         "Waldo_UI_ClearPanels",
-        "Clear Stuck WMP UI",
+        localize "STR_TIA_UiCleanup_Clear",
         "",
         {[] call Waldo_fnc_ClearUiPanels;},
         {true}
@@ -32,7 +32,7 @@ if (_aceAvailable) then {
     player setVariable ["Waldo_UI_CleanupInteractionMode", "ACE"];
 } else {
     private _actionId = player addAction [
-        "<t color='#79C7FF'>Clear Stuck WMP UI</t>",
+        format ["<t color='#79C7FF'>%1</t>", localize "STR_TIA_UiCleanup_Clear"],
         {[] call Waldo_fnc_ClearUiPanels;},
         [],
         -90,

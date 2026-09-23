@@ -75,14 +75,14 @@ private _btnIdcs = [1640, 1641, 1642, 1643, 1644, 1645, 1646, 1647, 1648];
 // the same function the initial run did instead of keeping a duplicate copy of
 // the tinting logic in sync with it by hand.
 private _accessBtn = _display displayCtrl 1592;
-private _setAccessLabel = { params ["_btn", "_on"]; _btn ctrlSetText (["COLOURBLIND MODE: OFF", "COLOURBLIND MODE: ON"] select _on) };
+private _setAccessLabel = { params ["_btn", "_on"]; _btn ctrlSetText (localize (["STR_TIA_Style_ColourblindOff", "STR_TIA_Style_ColourblindOn"] select _on)) };
 [_accessBtn, profileNamespace getVariable ["Waldo_accessibilityMode", false]] call _setAccessLabel;
 _accessBtn ctrlAddEventHandler ["ButtonClick", {
 	params ["_ctrl"];
 	private _on = !(profileNamespace getVariable ["Waldo_accessibilityMode", false]);
 	profileNamespace setVariable ["Waldo_accessibilityMode", _on];
 	saveProfileNamespace;
-	_ctrl ctrlSetText (["COLOURBLIND MODE: OFF", "COLOURBLIND MODE: ON"] select _on);
+	_ctrl ctrlSetText (localize (["STR_TIA_Style_ColourblindOff", "STR_TIA_Style_ColourblindOn"] select _on));
 
 	[] call Waldo_fnc_initHud;   // live badge picks up the new palette immediately
 }];

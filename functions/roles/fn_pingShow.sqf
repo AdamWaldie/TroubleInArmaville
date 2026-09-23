@@ -20,13 +20,14 @@ private _isTarget = _kind == "Target";
 // correctly in-game (dot_ca / destroy_ca) - kinds are told apart by colour and
 // label instead of guessing at unverified vanilla icon paths.
 private _style = switch (_kind) do {
-	case "Target":        { [[1, 0.55, 0.05, 1],   "ColorOrange", "TARGET"] };
-	case "Danger":        { [[1, 0.1, 0.1, 1],     "ColorRed",    "DANGER"] };
-	case "Regroup Here":  { [[0.15, 0.75, 0.35, 1], "ColorGreen",  "REGROUP"] };
-	case "Enemy Spotted": { [[1, 0.85, 0.05, 1],    "ColorYellow", "ENEMY"] };
-	default               { [[0.85, 0.2, 0.2, 1],   "ColorRed",    "PING"] };   // "Location"
+	case "Target":        { [[1, 0.55, 0.05, 1],   "ColorOrange", "STR_TIA_Ping_TagTarget"] };
+	case "Danger":        { [[1, 0.1, 0.1, 1],     "ColorRed",    "STR_TIA_Ping_TagDanger"] };
+	case "Regroup Here":  { [[0.15, 0.75, 0.35, 1], "ColorGreen",  "STR_TIA_Ping_TagRegroup"] };
+	case "Enemy Spotted": { [[1, 0.85, 0.05, 1],    "ColorYellow", "STR_TIA_Ping_TagEnemy"] };
+	default               { [[0.85, 0.2, 0.2, 1],   "ColorRed",    "STR_TIA_Ping_TagPing"] };   // "Location"
 };
-_style params ["_color", "_markerColor", "_prefix"];
+_style params ["_color", "_markerColor", "_prefixKey"];
+private _prefix = localize _prefixKey;
 private _icon = ["\A3\ui_f\data\map\markers\military\dot_ca.paa", "\A3\ui_f\data\map\markers\military\destroy_ca.paa"] select _isTarget;
 
 [_from, _isTarget, _where, _color, _icon, _prefix, _markerColor] spawn {
@@ -40,7 +41,7 @@ private _icon = ["\A3\ui_f\data\map\markers\military\dot_ca.paa", "\A3\ui_f\data
 		private _valid = if (_isTarget) then { !isNull _where && {alive _where} } else { true };
 		if (_valid) then {
 			private _p = if (_isTarget) then { (getPosATL _where) vectorAdd [0,0,2] } else { _where };
-			private _tag = format ["%1 (%2)", _prefix, _sender];
+			private _tag = format [localize "STR_TIA_Ping_WorldTag", _prefix, _sender];
 			drawIcon3D [_icon, _color, _p, 1, 1, 0, _tag, 1, 0.04, "PuristaBold"];
 			// A target ping is meant to track a moving person, not just the spot
 			// they were standing in when pinged - keep the map marker glued to
@@ -53,7 +54,7 @@ private _icon = ["\A3\ui_f\data\map\markers\military\dot_ca.paa", "\A3\ui_f\data
 	createMarkerLocal [_mk, _mkPos];
 	_mk setMarkerTypeLocal (["mil_dot", "mil_destroy"] select _isTarget);
 	_mk setMarkerColorLocal _markerColor;
-	_mk setMarkerTextLocal format ["%1: %2", _prefix, _sender];
+	_mk setMarkerTextLocal format [localize "STR_TIA_Ping_MapTag", _prefix, _sender];
 
 	sleep 15;
 

@@ -6,13 +6,17 @@
  * Duration 0 keeps the card visible until it is replaced or cleared.
  *
  * Arguments:
- * 0: Title <STRING>
- * 1: Message <STRING or TEXT>
+ * 0: Title <STRING or ARRAY> - plain text, STR_TIA_ key, or [fmtKey, args...]
+ * 1: Message <STRING, TEXT or ARRAY> - same forms as Title
+ *
+ * Title, message and source are resolved with Waldo_fnc_localize on THIS
+ * client, so the server can send keys and every player reads the card in
+ * their own game language.
  * 2: State <STRING> INFO | SUCCESS | WARNING | ERROR (default INFO)
  * 3: Duration <NUMBER> seconds, 0 = persistent (default 8)
  * 4: Placement <STRING> TOP | TOP_RIGHT | CENTER | BOTTOM_LEFT | BOTTOM_RIGHT
  * 5: Channel <STRING> replacement/ownership key (default MISSION)
- * 6: Source label <STRING> (default WALDOS MISSION PACK)
+ * 6: Source label <STRING or ARRAY> (default WALDOS MISSION PACK)
  * 7: Policy <STRING> AUTO | FIFO | REPLACE (default AUTO)
  * 8: Priority <NUMBER> mission metadata for arbitration/reporting (default 0)
  * 9: Allow permitted local placement override <BOOL> (default false)
@@ -26,13 +30,13 @@
 if (!hasInterface) exitWith {""};
 
 params [
-    ["_title", "NOTICE", [""]],
+    ["_title", "STR_TIA_Notify_Notice", ["", []]],
     ["_message", ""],
     ["_state", "INFO", [""]],
     ["_duration", 8, [0]],
     ["_placement", "TOP", [""]],
     ["_channel", "MISSION", [""]],
-    ["_source", "WALDOS MISSION PACK", [""]],
+    ["_source", "STR_TIA_Notify_DefaultSource", ["", []]],
     ["_policy", "AUTO", [""]],
     ["_priority", 0, [0]],
     ["_allowLocalOverride", false, [true]],
@@ -63,6 +67,13 @@ if ((uiNamespace getVariable ["Waldo_uiModalOpen", false]) && {!_fromQueue}) exi
     uiNamespace setVariable ["Waldo_UiPanelQueue", _queue];
     "QUEUED"
 };
+
+// Localised here rather than at the top: the deferred/modal-queue paths above
+// re-enter this function with the original args, so resolving once at draw
+// time is enough and keeps queued requests language-neutral.
+_title = [_title] call Waldo_fnc_localize;
+_message = [_message] call Waldo_fnc_localize;
+_source = [_source] call Waldo_fnc_localize;
 
 _state = toUpper _state;
 _channel = toUpper _channel;

@@ -36,6 +36,6 @@ params ["_role", "_teammateNames", "_detectiveName", "_jesterExists", "_jesterNa
 private _body = [_role, _teammateNames, _detectiveName, _jesterExists, _jesterName] call Waldo_fnc_roleBriefingText;
 
 [
-	"ROUND BRIEFING", _body,
-	"INFO", 20, "TOP_RIGHT", "ROLECARD", toUpper _role
+	localize "STR_TIA_Brief_CardTitle", _body,
+	"INFO", 20, "TOP_RIGHT", "ROLECARD", toUpper localize ("STR_TIA_Role_" + _role)
 ] call Waldo_fnc_ShowUiNotification;

@@ -271,7 +271,7 @@ player allowDamage false;
 					} else {
 						// Silent no-op otherwise looks identical to a broken key - tell the
 						// player WHY nothing happened instead of leaving them guessing.
-						hint "Testing Mode is off for this session - enable it in the lobby's Parameters tab.";
+						hint localize "STR_TIA_Dev_TestingOff";
 					};
 					_handled = true;
 				};
@@ -279,7 +279,7 @@ player allowDamage false;
 					if (missionNamespace getVariable ["TestingFlag", false]) then {
 						call Waldo_debugCycleRole;
 					} else {
-						hint "Testing Mode is off for this session - enable it in the lobby's Parameters tab.";
+						hint localize "STR_TIA_Dev_TestingOff";
 					};
 					_handled = true;
 				};

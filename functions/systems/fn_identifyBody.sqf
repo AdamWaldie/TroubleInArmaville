@@ -31,7 +31,9 @@ if (!isServer) exitWith {};
 params ["_body", "_finder"];
 if (isNull _body) exitWith {};
 
-private _who = [name _finder, "Someone"] select (isNull _finder);
+// Server-side: every card below is sent as stringtable keys + args, never
+// localised here, so each client renders it in its own language.
+private _who = [name _finder, "STR_TIA_Identify_Someone"] select (isNull _finder);
 private _finderIsDetective = !isNull _finder && {(_finder getVariable ["role", ""]) == "Detective"};
 private _alreadyRevealed = _body getVariable ["Waldo_roleRevealed", false];
 private _alreadyFound = _body getVariable ["Waldo_identified", false];
@@ -48,8 +50,8 @@ if (_alreadyRevealed) then {
 	// got the original reveal.
 	if (!isNull _finder) then {
 		[
-			"ALREADY IDENTIFIED", format ["%1's role is already confirmed - nothing new here.", name _body],
-			"INFO", 4, "TOP_RIGHT", "IDENTIFY", "INVESTIGATION"
+			"STR_TIA_Identify_AlreadyIdentified", ["STR_TIA_Identify_AlreadyIdentifiedBody", name _body],
+			"INFO", 4, "TOP_RIGHT", "IDENTIFY", "STR_TIA_Identify_Source"
 		] remoteExec ["Waldo_fnc_ShowUiNotification", _finder];
 	};
 } else {
@@ -58,8 +60,8 @@ if (_alreadyRevealed) then {
 		_body setVariable ["Waldo_roleRevealed", true, true];
 		private _role = _body getVariable ["role", "Innocent"];
 		[
-			"BODY IDENTIFIED", format ["%1 identified %2's body - they were a %3.", _who, name _body, _role],
-			"SUCCESS", 10, "TOP_RIGHT", "IDENTIFY", "INVESTIGATION"
+			"STR_TIA_Identify_BodyIdentified", ["STR_TIA_Identify_BodyIdentifiedBody", _who, name _body, "STR_TIA_Role_" + _role],
+			"SUCCESS", 10, "TOP_RIGHT", "IDENTIFY", "STR_TIA_Identify_Source"
 		] call Waldo_fnc_ShowUiNotificationAll;
 	} else {
 		if (_alreadyFound) then {
@@ -68,14 +70,14 @@ if (_alreadyRevealed) then {
 			// leaving the caller to conclude nothing happened.
 			if (!isNull _finder) then {
 				[
-					"ALREADY FOUND", format ["%1's body has already been reported. A Detective still needs to identify them for a role reveal.", name _body],
-					"INFO", 5, "TOP_RIGHT", "IDENTIFY", "INVESTIGATION"
+					"STR_TIA_Identify_AlreadyFound", ["STR_TIA_Identify_AlreadyFoundBody", name _body],
+					"INFO", 5, "TOP_RIGHT", "IDENTIFY", "STR_TIA_Identify_Source"
 				] remoteExec ["Waldo_fnc_ShowUiNotification", _finder];
 			};
 		} else {
 			[
-				"BODY FOUND", format ["%1 found %2's body.", _who, name _body],
-				"INFO", 8, "TOP_RIGHT", "IDENTIFY", "INVESTIGATION"
+				"STR_TIA_Identify_BodyFound", ["STR_TIA_Identify_BodyFoundBody", _who, name _body],
+				"INFO", 8, "TOP_RIGHT", "IDENTIFY", "STR_TIA_Identify_Source"
 			] call Waldo_fnc_ShowUiNotificationAll;
 		};
 	};

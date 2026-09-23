@@ -57,7 +57,7 @@ private _gapY = 0.006 * safezoneH;
 
 	private _btn = _display ctrlCreate ["RscButton", 3820 + _i, _group];
 	_btn ctrlSetPosition [0, _i * (_rowH + _gapY), _rowW, _rowH];
-	_btn ctrlSetText format ["%1   (%2)", name _p, toUpper _role];
+	_btn ctrlSetText format [localize "STR_TIA_Disguiser_Row", name _p, toUpper localize ("STR_TIA_Role_" + _role)];
 	_btn ctrlSetFontHeight (0.6 * _rowH);
 	_btn ctrlSetBackgroundColor [_color select 0, _color select 1, _color select 2, 0.45];
 	_btn ctrlSetTextColor [0.95, 0.93, 0.86, 1];
@@ -78,6 +78,6 @@ private _gapY = 0.006 * safezoneH;
 if (count _targets == 0) then {
 	private _lbl = _display ctrlCreate ["RscStructuredText", 3830, _group];
 	_lbl ctrlSetPosition [0, 0, _rowW, _rowH * 2];
-	_lbl ctrlSetStructuredText parseText "<t color='#9EA290'>No one else is alive to disguise as.</t>";
+	_lbl ctrlSetStructuredText parseText format ["<t color='#9EA290'>%1</t>", localize "STR_TIA_Disguiser_NoTargets"];
 	_lbl ctrlCommit 0;
 };

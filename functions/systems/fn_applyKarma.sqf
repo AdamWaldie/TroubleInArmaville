@@ -57,7 +57,8 @@ private _maxKarma = 100;
 			// itself implies.
 			private _reduced = ceil (_starting * _mult);
 			_x setVariable ["points", _reduced, true];
-			[format ["%1 has low karma (%2/100) and starts with reduced credits (%3) - play fair!", name _x, round _k, _reduced]] remoteExec ["systemChat", 0];
+			// Key + args, localised on each receiving client (Waldo_fnc_chat).
+			[["STR_TIA_Karma_LowWarning", name _x, round _k, _reduced]] remoteExec ["Waldo_fnc_chat", 0];
 		};
 
 		// decay toward neutral

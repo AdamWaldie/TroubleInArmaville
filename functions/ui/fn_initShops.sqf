@@ -5,6 +5,10 @@
 //
 // Catalog item format:
 //   [ _name, _cost, _type, _onBuy, _onActivate, _tooltip ]
+//     _name/_tooltip : stringtable keys (STR_TIA_Shop_* / STR_TIA_ShopTip_*),
+//                   localised only where they're drawn. The name key doubles
+//                   as the item's language-independent id (purchase log,
+//                   _requires), so never compare against localised text.
 //     _type       : "passive" | "weapon" | "activation"
 //     _onBuy      : code run immediately on purchase
 //     _onActivate : code run when the player presses whichever of Y/U/J this
@@ -68,7 +72,7 @@ Waldo_shopRenderPurchased = {
 	if (count _purchases == 0) then {
 		private _lbl = _display ctrlCreate ["RscStructuredText", _idBase, _group];
 		_lbl ctrlSetPosition [0, 0, _rowW, _lineH * 2];
-		_lbl ctrlSetStructuredText parseText "<t size='0.9' color='#9EA290'>Nothing purchased yet.</t>";
+		_lbl ctrlSetStructuredText parseText format ["<t size='0.9' color='#9EA290'>%1</t>", localize "STR_TIA_Shop_NothingPurchased"];
 		_lbl ctrlCommit 0;
 		_newIds pushBack _idBase;
 	} else {
@@ -86,7 +90,7 @@ Waldo_shopRenderPurchased = {
 				_statusTxt = if (_slotIdx >= 0) then {
 					format [" <t color='#F2BE55'>[%1]</t>", _keyLabels select _slotIdx]
 				} else {
-					if (_used) then { " <t color='#6a6f61'>[used]</t>" } else { " <t color='#E4514B'>[unassigned]</t>" }
+					if (_used) then { format [" <t color='#6a6f61'>[%1]</t>", localize "STR_TIA_Shop_Used"] } else { format [" <t color='#E4514B'>[%1]</t>", localize "STR_TIA_Shop_Unassigned"] }
 				};
 			};
 
@@ -94,7 +98,7 @@ Waldo_shopRenderPurchased = {
 			_lbl ctrlSetPosition [0, _y, _rowW, _lineH * 2];
 			_lbl ctrlSetStructuredText parseText format [
 				"<t size='1.0' color='#F2BE55'>%1</t>%2<br/><t size='0.85' color='#9EA290'>%3</t>",
-				_name, _statusTxt, _tip
+				localize _name, _statusTxt, localize _tip
 			];
 			_lbl ctrlCommit 0;
 			_newIds pushBack _idc;
@@ -141,21 +145,22 @@ Waldo_shopRenderPurchased = {
 // sync. Returns [key, label] pairs rather than pre-formatted strings so each
 // caller can join/colour them however its own layout needs (horizontal vs
 // stacked). Dev-only binds are appended only when Testing Mode is actually on.
+// Labels are localised here, on the client that draws them.
 Waldo_keyHintsFor = {
 	params ["_role"];
-	private _hints = [["L", "Holster"], ["K", "Scoreboard"], ["H", "Role Crest Style"]];
+	private _hints = [["L", "STR_TIA_Key_Holster"], ["K", "STR_TIA_Key_Scoreboard"], ["H", "STR_TIA_Key_CrestStyle"]];
 	if (_role in ["Traitor", "Detective"]) then {
-		_hints pushBack ["B", "Buy Menu"];
-		_hints pushBack ["Y U J", "Use Item"];
+		_hints pushBack ["B", "STR_TIA_Key_BuyMenu"];
+		_hints pushBack ["Y U J", "STR_TIA_Key_UseItem"];
 	};
 	if (_role == "Traitor") then {
-		_hints pushBack ["T (hold)", "Ping"];
+		_hints pushBack ["STR_TIA_Key_THold", "STR_TIA_Key_Ping"];
 	};
 	if (missionNamespace getVariable ["TestingFlag", false]) then {
-		_hints pushBack ["[", "Dev Menu"];
-		_hints pushBack ["]", "Cycle Role"];
+		_hints pushBack ["[", "STR_TIA_Key_DevMenu"];
+		_hints pushBack ["]", "STR_TIA_Key_CycleRole"];
 	};
-	_hints
+	_hints apply { _x apply { [_x] call Waldo_fnc_localize } }
 };
 
 // Swaps the player's vest, carrying over whatever was already stored in the
@@ -246,17 +251,17 @@ Waldo_roleColorHex = {
 // one (DNA misattribution) at once, for a sustained 60s window rather than
 // a single kill.
 Waldo_traitorShop = [
-	["Suicide Bomb", 2, "activation",
+	["STR_TIA_Shop_SuicideBomb", 2, "activation",
 		{},
 		{ [] call Waldo_fnc_suicideBomb; true },
-		"Detonate yourself (press your assigned key)"],
+		"STR_TIA_ShopTip_T_SuicideBomb"],
 
-	["Radar", 1, "passive",
+	["STR_TIA_Shop_Radar", 1, "passive",
 		{ [] call Waldo_fnc_traitorRadar; },
 		{},
-		"Pulses everyone's position (and role) for 30s, then refreshes"],
+		"STR_TIA_ShopTip_T_Radar"],
 
-	["Rocket Launcher", 3, "weapon",
+	["STR_TIA_Shop_RocketLauncher", 3, "weapon",
 		{
 			// Confirmed via .rpt, three separate times: magazine-before-weapon,
 			// a retry-after-weapon-exists, and plain addWeapon instead of
@@ -288,23 +293,23 @@ Waldo_traitorShop = [
 		},
 		{},
 		// Raised from 2 - highest raw AOE power in the shop, priced to match.
-		"A single-use rocket launcher"],
+		"STR_TIA_ShopTip_T_RocketLauncher"],
 
-	["Stamina", 1, "passive",
+	["STR_TIA_Shop_Stamina", 1, "passive",
 		{ player enableStamina false; },
 		{},
 		// Lowered from 2 - minor movement convenience, not worth gating like
 		// the tools above; matches the Detective shop's own Stamina price.
-		"Never run out of stamina"],
+		"STR_TIA_ShopTip_T_Stamina"],
 
-	["Teleport Grenades", 3, "weapon",
+	["STR_TIA_Shop_TeleportGrenades", 3, "weapon",
 		{ player addMagazines ["SmokeShellRed", 2]; [] call Waldo_fnc_warpSmoke; },
 		{},
 		// Raised from 2 - puts real distance between a kill and its scene,
 		// which is an investigation-defeating tool as much as a combat one.
-		"Throw red smoke to teleport to it (vanilla throw only)"],
+		"STR_TIA_ShopTip_T_TeleportGrenades"],
 
-	["Long Rifle", 3, "weapon",
+	["STR_TIA_Shop_LongRifle", 3, "weapon",
 		{
 			// addWeapon auto-chambers a compatible magazine ALREADY IN
 			// INVENTORY at the moment the weapon is added, not the other way
@@ -322,18 +327,18 @@ Waldo_traitorShop = [
 		},
 		{},
 		// Raised from 2 - long effective range is its own kind of power here.
-		"A powerful long-range rifle"],
+		"STR_TIA_ShopTip_T_LongRifle"],
 
 	// Kept at 2 (not raised) despite being genuinely powerful (an extra
 	// Traitor teammate) - it's the one Traitor tool that's fundamentally
 	// about teamwork with a fellow Traitor rather than solo play, and this
 	// shop is meant to keep that affordable, not price it out.
-	["Defibrillator", 2, "activation",
+	["STR_TIA_Shop_Defibrillator", 2, "activation",
 		{},
 		{ [] call Waldo_fnc_revive },
-		"Aim at a body and press your assigned key to revive them as a Traitor"],
+		"STR_TIA_ShopTip_T_Defibrillator"],
 
-	["Silenced Pistol", 2, "weapon",
+	["STR_TIA_Shop_SilencedPistol", 2, "weapon",
 		{
 			// See the Rocket Launcher entry above - plain addWeapon, not
 			// addWeaponGlobal (this already runs locally on the buyer's own
@@ -346,57 +351,57 @@ Waldo_traitorShop = [
 			if (_s != "") then { player addHandgunItem _s; };
 		},
 		{},
-		"A suppressed sidearm - quiet kills leave no gunshot to give you away"],
+		"STR_TIA_ShopTip_T_SilencedPistol"],
 
-	["Frag Grenades", 2, "weapon",
+	["STR_TIA_Shop_FragGrenades", 2, "weapon",
 		{ player addMagazines [(missionNamespace getVariable ["ShopFrag", "HandGrenade"]), 2]; },
 		{},
-		"Two fragmentation grenades"],
+		"STR_TIA_ShopTip_T_FragGrenades"],
 
-	["Body Armor", 2, "passive",
+	["STR_TIA_Shop_BodyArmor", 2, "passive",
 		{ [missionNamespace getVariable ["ShopArmorVest", "V_PlateCarrier2_rgr"]] call Waldo_swapVestKeepCargo; },
 		{},
-		"A heavy plate carrier - soak an extra hit or two"],
+		"STR_TIA_ShopTip_T_BodyArmor"],
 
-	["Medical Kit", 1, "weapon",
+	["STR_TIA_Shop_MedicalKit", 1, "weapon",
 		{ player addItem "Medikit"; player addItem "FirstAidKit"; },
 		{},
 		// Lowered from 2, alongside Radar - both stay affordable turn one on
 		// purpose, matching the Detective shop's own Medical Kit price.
-		"A medikit + first aid kit to patch yourself up"],
+		"STR_TIA_ShopTip_T_MedicalKit"],
 
-	["Fake Health Station", 3, "weapon",
+	["STR_TIA_Shop_FakeHealthStation", 3, "weapon",
 		{ [] call Waldo_fnc_fakeHealthStation; },
 		{},
 		// Raised from 2 - a lethal deception trap aimed squarely at whoever's
 		// trying to help, one of the more anti-investigative kill tools here.
-		"Deploy a decoy - identical to a real Health Station until someone uses it, then it detonates. You're safe from your own trap."],
+		"STR_TIA_ShopTip_T_FakeHealthStation"],
 
-	["Body Remover", 3, "activation",
+	["STR_TIA_Shop_BodyRemover", 3, "activation",
 		{},
 		{ [] call Waldo_fnc_removeBody },
 		// Raised from 2 - erases the Detective's evidence outright, not just
 		// evades it.
-		"Aim at a corpse and press your assigned key to destroy it, denying the Detective a body to test"],
+		"STR_TIA_ShopTip_T_BodyRemover"],
 
-	["C4 Charge", 2, "activation",
+	["STR_TIA_Shop_C4Charge", 2, "activation",
 		{},
 		{ [] call Waldo_fnc_placeC4 },
-		"Drop a timed explosive at your feet - it blows in 15s unless someone defuses it"],
+		"STR_TIA_ShopTip_T_C4Charge"],
 
-	["Night Vision", 1, "weapon",
+	["STR_TIA_Shop_NightVision", 1, "weapon",
 		{ player addWeapon (missionNamespace getVariable ["ShopNVG", "NVGoggles"]); },
 		{},
 		// Lowered from 2 - minor situational utility, matches the Detective
 		// shop's own Night Vision price.
-		"Night-vision goggles - own the dark rounds"],
+		"STR_TIA_ShopTip_T_NightVision"],
 
-	["Dead Ringer", 3, "activation",
+	["STR_TIA_Shop_DeadRinger", 3, "activation",
 		{},
 		{ [] call Waldo_fnc_deadRinger },
-		"Arms a 25s window: your next lethal hit is faked - you ragdoll like a kill and a decoy body appears, but you're not really dead"],
+		"STR_TIA_ShopTip_T_DeadRinger"],
 
-	["False Flag", 4, "passive",
+	["STR_TIA_Shop_FalseFlag", 4, "passive",
 		// No standalone hint here - fn_buyItem.sqf's own "PURCHASED" shop-panel
 		// confirmation (and its hint fallback for when the panel isn't open)
 		// already covers this; a second unconditional hint on top of that
@@ -408,9 +413,9 @@ Waldo_traitorShop = [
 		// match (though Disguiser below now edges it out, since that one
 		// corrupts the visual trail too, not just the forensic one). Can land
 		// on the Detective, not just an Innocent - see fn_onKilled.sqf.
-		"Your next kill leaves another living player's DNA at the scene instead of yours"],
+		"STR_TIA_ShopTip_T_FalseFlag"],
 
-	["Disguiser", 5, "activation",
+	["STR_TIA_Shop_Disguiser", 5, "activation",
 		{},
 		{
 			params ["_purchId", "_slotIdx"];
@@ -420,7 +425,7 @@ Waldo_traitorShop = [
 			[_purchId, _slotIdx] call Waldo_fnc_disguiserOpen;
 			false
 		},
-		"Press your assigned key to pick a living player - copy their exact current loadout for 60s. Any DNA you'd leave behind while disguised points to them instead of you."]
+		"STR_TIA_ShopTip_T_Disguiser"]
 ];
 
 // --- Detective shop ---
@@ -435,82 +440,82 @@ Waldo_traitorShop = [
 // self-sufficiency are never the credit decision that's gating real
 // investigative spending.
 Waldo_detectiveShop = [
-	["Portable Tester", 3, "activation",
+	["STR_TIA_Shop_PortableTester", 3, "activation",
 		{},
 		{ [] call Waldo_fnc_tester },
 		// Raised from 2 to the top of the shop - an instant, guaranteed role
 		// reveal at melee range trivializes investigation outright; this is
 		// deliberately the most expensive item a Detective can buy.
-		"Aim at a player or body within 3m and press your assigned key to reveal their role"],
+		"STR_TIA_ShopTip_D_PortableTester"],
 
-	["DNA Scanner", 2, "activation",
+	["STR_TIA_Shop_DNAScanner", 2, "activation",
 		{ player setVariable ["Waldo_dnaScannerCharges", 3, true]; },
 		{ [] call Waldo_fnc_dnaScanner },
-		"Aim at a body and press your assigned key to sample the killer's DNA, then track them down (3 uses)"],
+		"STR_TIA_ShopTip_D_DNAScanner"],
 
-	["Enhanced Scanner", 1, "passive",
+	["STR_TIA_Shop_EnhancedScanner", 1, "passive",
 		{ player setVariable ["Waldo_enhancedScanner", true, true]; },
 		{},
 		// Cheapest upgrade in the shop - rewards committing further to the
 		// DNA path (better odds, more detail) rather than gating it behind
 		// another expensive purchase on top of the base Scanner.
-		"Upgrades the DNA Scanner: longer/steadier tracking, half the contamination risk, and reveals time-of-death + weapon",
-		"DNA Scanner"],   // _requires: does nothing without the base scanner - greyed out in the shop until owned
+		"STR_TIA_ShopTip_D_EnhancedScanner",
+		"STR_TIA_Shop_DNAScanner"],   // _requires: does nothing without the base scanner - greyed out in the shop until owned
 
-	["Radar", 1, "passive",
+	["STR_TIA_Shop_Radar", 1, "passive",
 		{ [] call Waldo_fnc_detectiveRadar; },
 		{},
-		"Pulses all positions for 45s, then refreshes"],
+		"STR_TIA_ShopTip_D_Radar"],
 
-	["Smoke Grenades", 1, "weapon",
+	["STR_TIA_Shop_SmokeGrenades", 1, "weapon",
 		{ player addMagazines ["SmokeShell", 2]; },
 		{},
-		"Two smoke grenades"],
+		"STR_TIA_ShopTip_D_SmokeGrenades"],
 
-	["Stamina", 1, "passive",
+	["STR_TIA_Shop_Stamina", 1, "passive",
 		{ player enableStamina false; },
 		{},
-		"Never run out of stamina"],
+		"STR_TIA_ShopTip_D_Stamina"],
 
-	["Flower Power", 1, "weapon",
+	["STR_TIA_Shop_FlowerPower", 1, "weapon",
 		{ [] call Waldo_fnc_flowerPower; },
 		{},
-		"Your bullets turn into flowers (novelty)"],
+		"STR_TIA_ShopTip_D_FlowerPower"],
 
-	["Health Station", 1, "weapon",
+	["STR_TIA_Shop_HealthStation", 1, "weapon",
 		{ [] call Waldo_fnc_healthStation; },
 		{},
-		"Deploy a station - use its action to fully heal yourself"],
+		"STR_TIA_ShopTip_D_HealthStation"],
 
-	["Defibrillator", 2, "activation",
+	["STR_TIA_Shop_Defibrillator", 2, "activation",
 		{},
 		{ [] call Waldo_fnc_revive },
-		"Aim at a body and press your assigned key to bring them back"],
+		"STR_TIA_ShopTip_D_Defibrillator"],
 
-	["Frag Grenades", 1, "weapon",
+	["STR_TIA_Shop_FragGrenades", 1, "weapon",
 		{ player addMagazines [(missionNamespace getVariable ["ShopFrag", "HandGrenade"]), 2]; },
 		{},
-		"Two fragmentation grenades"],
+		"STR_TIA_ShopTip_D_FragGrenades"],
 
-	["Body Armor", 2, "passive",
+	["STR_TIA_Shop_BodyArmor", 2, "passive",
 		{ [missionNamespace getVariable ["ShopArmorVest", "V_PlateCarrier2_rgr"]] call Waldo_swapVestKeepCargo; },
 		{},
-		"A heavy plate carrier - stay standing long enough to catch the traitor"],
+		"STR_TIA_ShopTip_D_BodyArmor"],
 
-	["Medical Kit", 1, "weapon",
+	["STR_TIA_Shop_MedicalKit", 1, "weapon",
 		{ player addItem "Medikit"; player addItem "FirstAidKit"; },
 		{},
-		"A medikit + first aid kit to patch yourself up"],
+		"STR_TIA_ShopTip_D_MedicalKit"],
 
-	["Binoculars", 1, "weapon",
+	["STR_TIA_Shop_Binoculars", 1, "weapon",
 		{ player addWeapon (missionNamespace getVariable ["ShopBinocular", "Binocular"]); },
 		{},
-		"Binoculars for watching suspects from range"],
+		"STR_TIA_ShopTip_D_Binoculars"],
 
-	["Night Vision", 1, "weapon",
+	["STR_TIA_Shop_NightVision", 1, "weapon",
 		{ player addWeapon (missionNamespace getVariable ["ShopNVG", "NVGoggles"]); },
 		{},
-		"Night-vision goggles - keep watch in the dark"]
+		"STR_TIA_ShopTip_D_NightVision"]
 ];
 
 diag_log "[Waldo] initShops: catalogs ready";

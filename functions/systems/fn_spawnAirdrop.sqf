@@ -47,14 +47,14 @@ if (_golden) then {
 			_crate addItemCargoGlobal ["FirstAidKit", 6];
 			_crate addItemCargoGlobal [(missionNamespace getVariable ["ShopArmorVest", "V_PlateCarrier2_rgr"]), 1];
 			_smokeClass = "SmokeShellBlue";
-			_label = "MEDICAL";
+			_label = "STR_TIA_Airdrop_GoldenMedical";
 		};
 		case "ammo": {
 			_crate addMagazineCargoGlobal [(missionNamespace getVariable ["ShopPistolMag", "16Rnd_9x21_Mag"]), 6];
 			_crate addMagazineCargoGlobal [(missionNamespace getVariable ["TraitorRifleMag", "7Rnd_408_Mag"]), 6];
 			_crate addMagazineCargoGlobal [(missionNamespace getVariable ["ShopFrag", "HandGrenade"]), 4];
 			_smokeClass = "SmokeShellGreen";
-			_label = "AMMO";
+			_label = "STR_TIA_Airdrop_GoldenAmmo";
 		};
 		default {   // "weapons": the top sniper + a launcher + NVG + heavy armour (all discovered)
 			_crate addWeaponCargoGlobal [(missionNamespace getVariable ["TraitorRifle", "srifle_LRR_F"]), 1];
@@ -64,12 +64,14 @@ if (_golden) then {
 			_crate addItemCargoGlobal [(missionNamespace getVariable ["ShopNVG", "NVGoggles"]), 1];
 			_crate addItemCargoGlobal [(missionNamespace getVariable ["ShopArmorVest", "V_PlateCarrier2_rgr"]), 1];
 			_smokeClass = "SmokeShellYellow";
-			_label = "WEAPONS";
+			_label = "STR_TIA_Airdrop_GoldenWeapons";
 		};
 	};
 	[
-		"GOLDEN AIRDROP", format ["A GOLDEN %1 airdrop is falling!", _label],
-		"WARNING", 6, "TOP", "AIRDROP", "SUPPLY"
+		// _label is a whole-sentence key (not a word slotted into one) so
+		// translators can order it naturally; localised on each client.
+		"STR_TIA_Airdrop_GoldenTitle", _label,
+		"WARNING", 6, "TOP", "AIRDROP", "STR_TIA_Airdrop_Source"
 	] remoteExec ["Waldo_fnc_ShowUiNotification", 0];
 } else {
 	for "_i" from 1 to _limit do {
@@ -83,8 +85,8 @@ if (_golden) then {
 		};
 	};
 	[
-		"AIRDROP INBOUND", "A supply airdrop is falling!",
-		"INFO", 5, "TOP", "AIRDROP", "SUPPLY"
+		"STR_TIA_Airdrop_InboundTitle", "STR_TIA_Airdrop_InboundBody",
+		"INFO", 5, "TOP", "AIRDROP", "STR_TIA_Airdrop_Source"
 	] remoteExec ["Waldo_fnc_ShowUiNotification", 0];
 };
 

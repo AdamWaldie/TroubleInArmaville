@@ -49,7 +49,7 @@ private _token = player getVariable ["Waldo_radarCountdownToken", 0];
 		// text control in the file without one, and a gold (#D9AE34) glyph
 		// with no shadow washes out against bright terrain/sky behind it.
 		_ctrl ctrlSetStructuredText parseText format [
-			"<t align='center' font='PuristaMedium' size='1.0' shadow='1' color='#D9AE34'>Radar in %1s</t>", _remaining
+			"<t align='center' font='PuristaMedium' size='1.0' shadow='1' color='#D9AE34'>%1</t>", format [localize "STR_TIA_Radar_Countdown", _remaining]
 		];
 		sleep 1;
 	};

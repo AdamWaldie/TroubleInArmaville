@@ -11,18 +11,18 @@
 //////////////////////////////////////////////////////////////////
 
 if (player getVariable ["Waldo_deadRingerArmed", false]) exitWith {
-	["DEAD RINGER", "Already armed.", "WARNING", 3, "BOTTOM_LEFT", "DEADRINGER", "TRAITOR"] call Waldo_fnc_ShowUiNotification;
+	["STR_TIA_DeadRinger_Title", "STR_TIA_DeadRinger_AlreadyArmed", "WARNING", 3, "BOTTOM_LEFT", "DEADRINGER", "STR_TIA_Role_Traitor"] call Waldo_fnc_ShowUiNotification;
 	false
 };
 
 player setVariable ["Waldo_deadRingerArmed", true];
-["DEAD RINGER", "Armed - any hit in the next 25s will be faked.", "SUCCESS", 4, "BOTTOM_LEFT", "DEADRINGER", "TRAITOR"] call Waldo_fnc_ShowUiNotification;
+["STR_TIA_DeadRinger_Title", "STR_TIA_DeadRinger_Armed", "SUCCESS", 4, "BOTTOM_LEFT", "DEADRINGER", "STR_TIA_Role_Traitor"] call Waldo_fnc_ShowUiNotification;
 
 [] spawn {
 	sleep 25;
 	if (player getVariable ["Waldo_deadRingerArmed", false]) then {
 		player setVariable ["Waldo_deadRingerArmed", false];
-		["DEAD RINGER", "Expired.", "INFO", 3, "BOTTOM_LEFT", "DEADRINGER", "TRAITOR"] call Waldo_fnc_ShowUiNotification;
+		["STR_TIA_DeadRinger_Title", "STR_TIA_DeadRinger_Expired", "INFO", 3, "BOTTOM_LEFT", "DEADRINGER", "STR_TIA_Role_Traitor"] call Waldo_fnc_ShowUiNotification;
 	};
 };
 

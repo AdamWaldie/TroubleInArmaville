@@ -35,7 +35,7 @@ _charge allowDamage false;
 // way; this just stops a second, later click (or a planter's own click)
 // from re-marking an already-defused charge.
 [_charge, [
-	"<t color='#ff3333'>Defuse Charge</t>",
+	["<t color='#ff3333'>%1</t>", "STR_TIA_Action_DefuseCharge"],
 	{
 		params ["_target", "_caller"];
 		if (_caller != (_target getVariable ["Waldo_c4Owner", objNull]) && {!(_target getVariable ["Waldo_c4Defused", false])}) then {
@@ -45,7 +45,7 @@ _charge allowDamage false;
 	nil, 6, true, true, "",
 	"alive _this",
 	3
-]] remoteExec ["addAction", 0, _charge];
+]] remoteExec ["Waldo_fnc_addActionL", 0, _charge];   // title localised per client
 
 [_charge, _owner] spawn {
 	params ["_charge", "_owner"];
@@ -62,7 +62,7 @@ _charge allowDamage false;
 		// the same rich notification card system now; this was the one
 		// straggler still on the old chat-log-only feedback.
 		[
-			"CHARGE DEFUSED", "A planted charge was defused.", "SUCCESS", 6, "TOP_RIGHT", "C4_DEFUSED", "INVESTIGATION"
+			"STR_TIA_C4_Defused", "STR_TIA_C4_DefusedBody", "SUCCESS", 6, "TOP_RIGHT", "C4_DEFUSED", "STR_TIA_Identify_Source"
 		] remoteExec ["Waldo_fnc_ShowUiNotification", 0];
 		// Leave the defused charge (with its DNA) around briefly for forensics.
 		[_charge] spawn { params ["_c"]; sleep 30; if (!isNull _c) then { deleteVehicle _c }; };

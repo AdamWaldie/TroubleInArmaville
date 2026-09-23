@@ -22,16 +22,20 @@ if (_index < 0 || _index >= count _catalog) exitWith {};
 private _item = _catalog select _index;
 _item params ["_name", "_cost", "_type", "_onBuy", "_onAct", "_tip", ["_requires", ""]];
 
+// _name/_requires are stringtable keys (the language-independent item id);
+// only the text shown to the player is localised.
+private _nameL = localize _name;
+
 private _pts  = player getVariable ["points", 0];
 private _disp = uiNamespace getVariable ["WaldoShop", displayNull];
 
 if (_pts < _cost) exitWith {
 	if (isNull _disp) then {
-		hint "[X] Not enough credits.";
+		hint localize "STR_TIA_Buy_NotEnoughHint";
 	} else {
 		(_disp displayCtrl 1103) ctrlSetStructuredText parseText (format [
-			"<t size='1.15' color='#E4514B'>[X] NOT ENOUGH CREDITS</t><br/><t size='0.95' color='#F2EFE3'>%1 costs %2 - you have %3.</t>",
-			_name, _cost, _pts
+			"<t size='1.15' color='#E4514B'>%1</t><br/><t size='0.95' color='#F2EFE3'>%2</t>",
+			localize "STR_TIA_Buy_NotEnoughTitle", format [localize "STR_TIA_Buy_NotEnoughBody", _nameL, _cost, _pts]
 		]);
 	};
 };
@@ -41,11 +45,12 @@ if (_pts < _cost) exitWith {
 // clicked a button that was disabled for a reason.
 if (_requires != "" && {((player getVariable ["Waldo_purchases", []]) findIf { (_x select 1) == _requires }) < 0}) exitWith {
 	if (isNull _disp) then {
-		hint format ["[X] Requires %1 first.", _requires];
+		hint format [localize "STR_TIA_Buy_RequiresHint", localize _requires];
 	} else {
 		(_disp displayCtrl 1103) ctrlSetStructuredText parseText (format [
-			"<t size='1.15' color='#E4514B'>[X] REQUIRES %1</t><br/><t size='0.95' color='#F2EFE3'>Buy %1 before %2.</t>",
-			toUpper _requires, _name
+			"<t size='1.15' color='#E4514B'>%1</t><br/><t size='0.95' color='#F2EFE3'>%2</t>",
+			format [localize "STR_TIA_Buy_RequiresTitle", toUpper localize _requires],
+			format [localize "STR_TIA_Buy_RequiresBody", localize _requires, _nameL]
 		]);
 	};
 };
@@ -71,9 +76,9 @@ player setVariable ["Waldo_purchases", _purchases];
 if (isNull _disp) exitWith {
 	if (_type == "activation") then {
 		if (_keyLabel != "") then {
-			hint format ["%1 ready - press %2 to use.", _name, _keyLabel];
+			hint format [localize "STR_TIA_Buy_ReadyHint", _nameL, _keyLabel];
 		} else {
-			hint format ["%1 bought - all 3 keys are full, assign it a key from the Buy Menu.", _name];
+			hint format [localize "STR_TIA_Buy_KeysFullHint", _nameL];
 		};
 	};
 };
@@ -81,7 +86,7 @@ if (isNull _disp) exitWith {
 [_disp] call Waldo_shopRenderPurchased;
 
 // --- Refresh the open shop: credits, card affordability, and a confirmation. ---
-(_disp displayCtrl 1101) ctrlSetText (format ["%1 CREDITS", _new]);
+(_disp displayCtrl 1101) ctrlSetText (format [localize "STR_TIA_Buy_Credits", _new]);
 
 private _color = [_role] call Waldo_roleColor;
 private _nowOwned = _purchases;
@@ -102,9 +107,9 @@ private _nowOwned = _purchases;
 
 private _extra = "";
 if (_type == "activation") then {
-	_extra = if (_keyLabel != "") then { format [" - press %1 to use", _keyLabel] } else { " - assign it a key below" };
+	_extra = if (_keyLabel != "") then { " " + format [localize "STR_TIA_Buy_PressToUse", _keyLabel] } else { " " + localize "STR_TIA_Buy_AssignBelow" };
 };
 (_disp displayCtrl 1103) ctrlSetStructuredText parseText (format [
-	"<t size='1.2' color='#6FCB74'>[OK] PURCHASED: %1</t><t size='0.95' color='#9EA290'>%2</t><br/><t size='0.95' color='#9EA290'>%3 credits remaining.</t>",
-	_name, _extra, _new
+	"<t size='1.2' color='#6FCB74'>%1</t><t size='0.95' color='#9EA290'>%2</t><br/><t size='0.95' color='#9EA290'>%3</t>",
+	format [localize "STR_TIA_Buy_Purchased", _nameL], _extra, format [localize "STR_TIA_Buy_CreditsRemaining", _new]
 ]);

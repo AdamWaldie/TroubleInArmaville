@@ -31,8 +31,8 @@ while { missionNamespace getVariable ["gameOn", false] } do {
 	if (!_overtimeAnnounced && {_timer >= _start}) then {
 		_overtimeAnnounced = true;
 		[
-			"OVERTIME", "The round has run past its planned length - it continues as long as unresolved deaths keep extending the clock.",
-			"WARNING", 8, "TOP", "OVERTIME", "ROUND"
+			"STR_TIA_Overtime_Title", "STR_TIA_Overtime_Body",
+			"WARNING", 8, "TOP", "OVERTIME", "STR_TIA_Source_Round"
 		] call Waldo_fnc_ShowUiNotificationAll;
 	};
 

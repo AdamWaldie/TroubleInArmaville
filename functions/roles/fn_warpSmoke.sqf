@@ -55,7 +55,7 @@ private _eh = player addEventHandler ["Fired", {
 				_unit setPos _land;
 				playSound3D [getMissionPath "audio\portalOut.ogg", _unit];
 			} else {
-				["TELEPORT GRENADES", "That landed outside the arena - no teleport.", "WARNING", 4, "BOTTOM_LEFT", "WARPSMOKE", "TRAITOR"] call Waldo_fnc_ShowUiNotification;
+				["STR_TIA_Warp_Title", "STR_TIA_Warp_Outside", "WARNING", 4, "BOTTOM_LEFT", "WARPSMOKE", "STR_TIA_Role_Traitor"] call Waldo_fnc_ShowUiNotification;
 			};
 			sleep 0.5;
 			deleteVehicle _flare;
@@ -91,7 +91,7 @@ if (!isNil "CBA_fnc_addEventHandler") then {
 					_unit setPos _land;
 					playSound3D [getMissionPath "audio\portalOut.ogg", _unit];
 				} else {
-					["TELEPORT GRENADES", "That landed outside the arena - no teleport.", "WARNING", 4, "BOTTOM_LEFT", "WARPSMOKE", "TRAITOR"] call Waldo_fnc_ShowUiNotification;
+					["STR_TIA_Warp_Title", "STR_TIA_Warp_Outside", "WARNING", 4, "BOTTOM_LEFT", "WARPSMOKE", "STR_TIA_Role_Traitor"] call Waldo_fnc_ShowUiNotification;
 				};
 				sleep 0.5;
 				deleteVehicle _flare;

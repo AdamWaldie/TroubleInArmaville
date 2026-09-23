@@ -56,13 +56,13 @@ while { !_found && {_tries < 40} } do {
 };
 
 _unit setPosATL _safePos;
-["DEAD RINGER", "Playing dead...", "WARNING", 0, "BOTTOM_LEFT", "DEADRINGER", "TRAITOR"] call Waldo_fnc_ShowUiNotification;
+["STR_TIA_DeadRinger_Title", "STR_TIA_DeadRinger_PlayingDead", "WARNING", 0, "BOTTOM_LEFT", "DEADRINGER", "STR_TIA_Role_Traitor"] call Waldo_fnc_ShowUiNotification;
 
 [_unit] spawn {
 	params ["_unit"];
 	sleep 20;
 	if (alive _unit) then {
 		_unit setVariable ["Waldo_deadRingerTriggered", false];
-		["DEAD RINGER", "You're back up.", "SUCCESS", 4, "BOTTOM_LEFT", "DEADRINGER", "TRAITOR"] call Waldo_fnc_ShowUiNotification;
+		["STR_TIA_DeadRinger_Title", "STR_TIA_DeadRinger_BackUp", "SUCCESS", 4, "BOTTOM_LEFT", "DEADRINGER", "STR_TIA_Role_Traitor"] call Waldo_fnc_ShowUiNotification;
 	};
 };

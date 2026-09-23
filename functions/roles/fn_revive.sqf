@@ -18,26 +18,26 @@
 private _target = cursorTarget;
 private _warn = {
 	params ["_msg"];
-	["REVIVE", _msg, "WARNING", 3, "BOTTOM_LEFT", "REVIVE", "REVIVE"] call Waldo_fnc_ShowUiNotification;
+	["STR_TIA_Revive_Title", _msg, "WARNING", 3, "BOTTOM_LEFT", "REVIVE", "STR_TIA_Revive_Title"] call Waldo_fnc_ShowUiNotification;
 };
 
 if (isNull _target || {!(_target isKindOf "CAManBase")} || {alive _target}) exitWith {
-	["Aim at a body."] call _warn;
+	["STR_TIA_RemoveBody_AimAtBody"] call _warn;
 	false
 };
 if (isNil { _target getVariable "player" }) exitWith {
-	["That body cannot be revived."] call _warn;
+	["STR_TIA_Revive_CannotRevive"] call _warn;
 	false
 };
 if ((player distance _target) > 3) exitWith {
-	["Move closer to the body."] call _warn;
+	["STR_TIA_RemoveBody_MoveCloser"] call _warn;
 	false
 };
 
 private _revived = _target getVariable "player";
-if (isNull _revived) exitWith { ["Revive failed."] call _warn; false };
+if (isNull _revived) exitWith { ["STR_TIA_Revive_Failed"] call _warn; false };
 
-["REVIVE", "Reviving...", "INFO", 3, "BOTTOM_LEFT", "REVIVE", "REVIVE"] call Waldo_fnc_ShowUiNotification;
+["STR_TIA_Revive_Title", "STR_TIA_Revive_Reviving", "INFO", 3, "BOTTOM_LEFT", "REVIVE", "STR_TIA_Revive_Title"] call Waldo_fnc_ShowUiNotification;
 
 // Y is handled unscheduled (called directly from the KeyDown handler), so
 // both delays below have to live in their own scheduled thread.
@@ -58,7 +58,7 @@ if (isNull _revived) exitWith { ["Revive failed."] call _warn; false };
 	sleep 0.5;
 	[2400] remoteExec ["setPlayerRespawnTime", _revived];
 
-	["REVIVE", "Revive complete.", "SUCCESS", 4, "BOTTOM_LEFT", "REVIVE", "REVIVE"] call Waldo_fnc_ShowUiNotification;
+	["STR_TIA_Revive_Title", "STR_TIA_Revive_Complete", "SUCCESS", 4, "BOTTOM_LEFT", "REVIVE", "STR_TIA_Revive_Title"] call Waldo_fnc_ShowUiNotification;
 };
 
 true

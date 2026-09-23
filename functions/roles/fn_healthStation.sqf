@@ -40,7 +40,7 @@ clearBackpackCargoGlobal _station;
 // (the caller), so no remoteExec is needed to heal them - they're already
 // local to whichever machine is running this.
 [_station, [
-	"<t color='#3FE07A' size='1.4'>HEALTH STATION</t>",
+	["<t color='#3FE07A' size='1.4'>%1</t>", "STR_TIA_Health_Title"],
 	{
 		params ["_target", "_caller"];
 		if (isNil "ace_medical_treatment_fnc_fullHeal") then {
@@ -48,12 +48,12 @@ clearBackpackCargoGlobal _station;
 		} else {
 			[objNull, _caller] call ace_medical_treatment_fnc_fullHeal;
 		};
-		["HEALTH STATION", "You have been treated.", "SUCCESS", 4, "BOTTOM_LEFT", "HEALTHSTATION", "HEALTH STATION"] call Waldo_fnc_ShowUiNotification;
+		["STR_TIA_Health_Title", "STR_TIA_Health_Treated", "SUCCESS", 4, "BOTTOM_LEFT", "HEALTHSTATION", "STR_TIA_Health_Title"] call Waldo_fnc_ShowUiNotification;
 	},
 	nil, 1.5, false, false, "",
 	"alive _this",
 	4
-]] remoteExec ["addAction", 0, _station];
+]] remoteExec ["Waldo_fnc_addActionL", 0, _station];   // title localised per client
 
 // Reported "no interactions" with no bug found on static review of the
 // addAction call itself (it matches Defuse Charge's own working
