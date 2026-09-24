@@ -29,7 +29,6 @@ PREFIX = "STR_TIA_"
 ROLES = ["Traitor", "Detective", "Jester", "Innocent"]
 DYNAMIC_KEYS = (
     [f"STR_TIA_Role_{r}" for r in ROLES]
-    + [f"STR_TIA_Role_{r}_Letter" for r in ROLES]
     + [f"STR_TIA_Dir_{d}" for d in ["N", "NE", "E", "SE", "S", "SW", "W", "NW"]]
 )
 

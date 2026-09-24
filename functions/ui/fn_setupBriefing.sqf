@@ -20,6 +20,15 @@
 
 if (!hasInterface) exitWith {};
 
+// initPlayerLocal normally calls this once, but respawn/JIP tooling and QA may
+// legitimately invoke the client setup path again. createDiarySubject does not
+// deduplicate its records, so rebuilding an existing subject multiplies every
+// How To Play entry. Keep the function's documented once-per-session contract
+// and simply return the player to the existing subject on repeat calls.
+if (player diarySubjectExists "WaldoHowToPlay") exitWith {
+	player selectDiarySubject "WaldoHowToPlay";
+};
+
 // Wraps text in a colour span. _key is localised first when it's a
 // stringtable key; plain text (e.g. "K") passes straight through.
 private _hl = {

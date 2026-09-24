@@ -232,12 +232,9 @@ if (_style > 0) then {
 		case "plank": { [0.227, 0.243, 0.165, 1] };
 		default       { [0.95, 0.93, 0.86, 1] };
 	});
-	// The initial comes from the stringtable (STR_TIA_Role_<role>_Letter) rather
-	// than the first character of the localised name: the letter boxes above
-	// were measured for a single Latin-width glyph, so translators pick a
-	// single glyph that fits (and the Jester nudge below still keys off the
-	// role, not the letter).
-	_letter ctrlSetText toUpper localize format ["STR_TIA_Role_%1_Letter", _role];
+	// Role initials are canonical gameplay logos, not translated text. Keep
+	// T / D / J / I consistent across every language and crest style.
+	_letter ctrlSetText toUpper (_role select [0, 1]);
 	// Before ctrlTextHeight, always - that command reports the height of the text
 	// at whatever size is in effect, so measuring first centres against the wrong
 	// size.

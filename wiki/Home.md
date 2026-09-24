@@ -11,6 +11,7 @@ Trouble in Terrorist Town, rebuilt in Arma 3. Hidden roles, a round timer, credi
 
 ## Contributing
 
+- **[Community Localisations](Dev-Community-Localisations)** explains how to correct or add translations and validate them in-game.
 - **[Architecture](Dev-Architecture)** maps the function library, round state, and respawn flow.
 - **[Equipment System](Dev-Equipment-System)** explains dynamic arsenal discovery.
 - **[Dev and Test Mode](Dev-Test-Mode)** explains the solo test framework and simulated players.
