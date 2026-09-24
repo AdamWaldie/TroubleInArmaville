@@ -38,7 +38,33 @@ private _display = uiNamespace getVariable "WaldoShop";
 
 // --- Header: a neutral dark bar with a thin stripe tinted to the role colour ---
 (_display displayCtrl 1108) ctrlSetBackgroundColor [_color select 0, _color select 1, _color select 2, 1];
-(_display displayCtrl 1100) ctrlSetText (format [localize "STR_TIA_Buy_Armory", toUpper localize ("STR_TIA_Role_" + _role)]);
+private _titleCtrl = _display displayCtrl 1100;
+_titleCtrl ctrlSetText (format [localize "STR_TIA_Buy_Armory", toUpper localize ("STR_TIA_Role_" + _role)]);
+_titleCtrl ctrlSetTextColor [0.95, 0.93, 0.86, 1];
+_titleCtrl ctrlShow true;
+
+// Set this at runtime too, rather than relying solely on the config-time
+// $STR_ expansion. Live visual QA showed both header labels disappearing
+// while their surrounding controls and all runtime-created item text rendered.
+// Explicit local-client text/color makes the purchased heading follow the same
+// reliable path as the role-specific armory title in every language.
+private _purchasedTitleCtrl = _display displayCtrl 1105;
+_purchasedTitleCtrl ctrlSetText (localize "STR_TIA_Ui_Purchased");
+_purchasedTitleCtrl ctrlSetTextColor [0.95, 0.93, 0.86, 1];
+_purchasedTitleCtrl ctrlShow true;
+
+// ST_VCENTER is unreliable for left-aligned RscText (the same engine quirk
+// handled by the style picker). Shrink each title to its measured text height
+// and offset it inside the original header box instead.
+private _vcenterTitle = {
+	params ["_ctrl"];
+	private _textH = ctrlTextHeight _ctrl;
+	private _pos = ctrlPosition _ctrl;
+	_ctrl ctrlSetPosition [_pos select 0, (_pos select 1) + (((_pos select 3) - _textH) / 2), _pos select 2, _textH];
+	_ctrl ctrlCommit 0;
+};
+[_titleCtrl] call _vcenterTitle;
+[_purchasedTitleCtrl] call _vcenterTitle;
 
 private _credits = player getVariable ["points", 0];
 (_display displayCtrl 1101) ctrlSetText (format [localize "STR_TIA_Buy_Credits", _credits]);

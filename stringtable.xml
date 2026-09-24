@@ -1038,58 +1038,6 @@
 				<Chinesesimp>无辜者</Chinesesimp>
 				<Turkish>Masum</Turkish>
 			</Key>
-			<Key ID="STR_TIA_Role_Traitor_Letter">
-				<Original>T</Original>
-				<English>T</English>
-				<German>V</German>
-				<French>T</French>
-				<Spanish>T</Spanish>
-				<Italian>T</Italian>
-				<Polish>Z</Polish>
-				<Portuguese>T</Portuguese>
-				<Russian>П</Russian>
-				<Czech>Z</Czech>
-				<Turkish>H</Turkish>
-			</Key>
-			<Key ID="STR_TIA_Role_Detective_Letter">
-				<Original>D</Original>
-				<English>D</English>
-				<German>D</German>
-				<French>D</French>
-				<Spanish>D</Spanish>
-				<Italian>D</Italian>
-				<Polish>D</Polish>
-				<Portuguese>D</Portuguese>
-				<Russian>Д</Russian>
-				<Czech>D</Czech>
-				<Turkish>D</Turkish>
-			</Key>
-			<Key ID="STR_TIA_Role_Jester_Letter">
-				<Original>J</Original>
-				<English>J</English>
-				<German>N</German>
-				<French>B</French>
-				<Spanish>B</Spanish>
-				<Italian>G</Italian>
-				<Polish>B</Polish>
-				<Portuguese>B</Portuguese>
-				<Russian>Ш</Russian>
-				<Czech>Š</Czech>
-				<Turkish>S</Turkish>
-			</Key>
-			<Key ID="STR_TIA_Role_Innocent_Letter">
-				<Original>I</Original>
-				<English>I</English>
-				<German>U</German>
-				<French>I</French>
-				<Spanish>I</Spanish>
-				<Italian>I</Italian>
-				<Polish>N</Polish>
-				<Portuguese>I</Portuguese>
-				<Russian>Н</Russian>
-				<Czech>N</Czech>
-				<Turkish>M</Turkish>
-			</Key>
 		</Container>
 		<Container name="Key">
 			<Key ID="STR_TIA_Key_Holster">

@@ -7,6 +7,7 @@
 - [Lobby Parameters](Player-Lobby-Parameters)
 
 **Contributing**
+- [Community Localisations](Dev-Community-Localisations)
 - [Architecture](Dev-Architecture)
 - [Equipment System](Dev-Equipment-System)
 - [Dev and Test Mode](Dev-Test-Mode)

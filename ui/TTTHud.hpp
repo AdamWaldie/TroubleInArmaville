@@ -854,26 +854,15 @@ class WaldoShop {
 			colorBackground[] = WALDO_ACCENT;   // tinted to the role colour at runtime
 			style = 0;
 		};
-		class shopTitle: RscText {
-			idc = 1100;
-			text = "$STR_TIA_Ui_Shop";
-			x = safezoneX + (0.295 * safezoneW);
-			y = safezoneY + (0.18 * safezoneH);
-			w = 0.26 * safezoneW;
-			h = 0.062 * safezoneH;
-			colorBackground[] = {0,0,0,0};
-			colorText[] = {0.95,0.93,0.86,1};
-			style = ST_LEFT + ST_VCENTER;
-			font = "PuristaBold";
-			sizeEx = (((((safezoneW / safezoneH) min 1.2) / 1.2) / 25) * 1.5);
-			shadow = 1;
-		};
 		class shopCredits: RscText {
 			idc = 1101;
 			text = "$STR_TIA_Ui_ZeroCredits";
-			x = safezoneX + (0.44 * safezoneW);
+			// Keep the right-aligned balance outside the title's full-width lane.
+			// German and Russian role/armory labels need almost all of that lane
+			// and otherwise paint underneath this control.
+			x = safezoneX + (0.56 * safezoneW);
 			y = safezoneY + (0.18 * safezoneH);
-			w = 0.265 * safezoneW;
+			w = 0.145 * safezoneW;
 			h = 0.062 * safezoneH;
 			colorBackground[] = {0,0,0,0};
 			colorText[] = {0.95,0.93,0.86,1};
@@ -936,6 +925,26 @@ class WaldoShop {
 			colorBackground[] = WALDO_ACCENT;
 			style = 0;
 		};
+	};
+
+	class Controls {
+		// Header labels belong in the foreground controls layer. When declared
+		// in controlsBackground they were present and addressable by IDC but did
+		// not paint in-game, leaving only Credits and the empty purchased panel.
+		class shopTitle: RscText {
+			idc = 1100;
+			text = "$STR_TIA_Ui_Shop";
+			x = safezoneX + (0.295 * safezoneW);
+			y = safezoneY + (0.18 * safezoneH);
+			w = 0.26 * safezoneW;
+			h = 0.062 * safezoneH;
+			colorBackground[] = {0,0,0,0};
+			colorText[] = {0.95,0.93,0.86,1};
+			style = ST_LEFT;
+			font = "PuristaBold";
+			sizeEx = (((((safezoneW / safezoneH) min 1.2) / 1.2) / 25) * 1.5);
+			shadow = 1;
+		};
 		class shopPurchTitle: RscText {
 			idc = 1105;
 			text = "$STR_TIA_Ui_Purchased";
@@ -944,14 +953,11 @@ class WaldoShop {
 			w = 0.19 * safezoneW;
 			h = 0.062 * safezoneH;
 			colorText[] = {0.95,0.93,0.86,1};
-			style = ST_LEFT + ST_VCENTER;
+			style = ST_LEFT;
 			font = "PuristaBold";
 			sizeEx = (((((safezoneW / safezoneH) min 1.2) / 1.2) / 25) * 1.1);
 			shadow = 1;
 		};
-	};
-
-	class Controls {
 		class shopGroup: RscControlsGroup {
 			idc = 1102;
 			x = safezoneX + (0.29 * safezoneW);

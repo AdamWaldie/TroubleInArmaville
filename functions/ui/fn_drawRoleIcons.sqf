@@ -61,9 +61,13 @@ private _eh = addMissionEventHandler ["Draw3D", {
 	private _drawTag = {
 		params ["_pos", "_color", "_word", "_dist"];
 		private _far = _dist > 25;
-		// _word is the role id; full localised name up close, the role's
-		// stringtable initial (STR_TIA_Role_<role>_Letter) at range.
-		private _label = localize format [["STR_TIA_Role_%1", "STR_TIA_Role_%1_Letter"] select _far, _word];
+		// _word is the role id: show the localised name up close, but retain
+		// the canonical T / D / J / I gameplay logo at range.
+		private _label = if (_far) then {
+			toUpper (_word select [0, 1])
+		} else {
+			localize format ["STR_TIA_Role_%1", _word]
+		};
 		private _size = (0.035 + (_dist * 0.0008)) min 0.07;
 		drawIcon3D [_icon, [0.03, 0.03, 0.03, 1], _pos, 0, 0, 0, _label, 0, _size * 1.12, "PuristaBold", "center"];
 		drawIcon3D [_icon, _color, _pos, 0, 0, 0, _label, 0, _size, "PuristaBold", "center"];
